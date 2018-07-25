@@ -1,0 +1,12 @@
+autoconf
+automake
+lorax
+kernel-modules
+libguestfs-tools
+virt-install
+make
+squashfs-tools
+expect
+pigz
+openssh
+openssh-clients

@@ -1,0 +1,55 @@
+#
+# THIS KICKSTART IS ONLY USED FOR BUILDING OVIRT NODE
+#
+#              NOT FOR INSTALLATION
+#
+
+lang en_US.UTF-8
+keyboard us
+timezone --utc Etc/UTC
+network
+auth --enableshadow --passalgo=sha512
+selinux --enforcing
+rootpw --lock
+firstboot --reconfig
+
+clearpart --all --initlabel
+bootloader --timeout=1
+part / --size=5120 --fstype=ext4 --fsoptions=discard
+
+poweroff
+
+
+%post --erroronfail
+set -x
+mkdir -p /etc/yum.repos.d
+
+# Adding upstream oVirt vdsm
+# 1. Install oVirt release file with repositories
+yum install -y --nogpgcheck @OVIRTRELEASERPMURL@
+yum -y --nogpgcheck update
+
+# Adds the latest cockpit bits
+yum install --nogpgcheck -y cockpit
+
+# 1.a Ensure that we use baseurls to ensure we always pick
+#     the mist recent content (right after repo composes/releases)
+sed -i "/^mirrorlist/ d ; s/^#baseurl/baseurl/" $(find /etc/yum.repos.d/*ovirt*.repo -type f ! -name "*dep*")
+
+# 2. Install oVirt Node release and placeholder
+# (exclude ovirt-node-ng-image-update to prevent the obsoletes logic)
+yum install -y --nogpgcheck \
+  --exclude ovirt-node-ng-image-update \
+  ovirt-release-host-node \
+  ovirt-node-ng-image-update-placeholder
+
+# let VDSM configure itself, but don't have the file owned by any package, so we pass 'rpm -V'
+touch /var/lib/ngn-vdsm-need-configure
+
+# Postprocess (always the last step)
+imgbase --debug --experimental \
+  image-build \
+  --postprocess \
+  --set-nvr=$(rpm -q --qf "ovirt-node-ng-%{version}-0.$(date +%Y%m%d).0" ovirt-release-host-node)
+
+%end

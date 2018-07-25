@@ -1,0 +1,52 @@
+# Kickstart for ovirt-node-ng, based on `make installed-squashfs` with some
+# minor changes
+
+lang en_US.UTF-8
+keyboard us
+timezone --utc Etc/UTC
+auth --enableshadow --passalgo=sha512
+selinux --enforcing
+network --bootproto=dhcp --hostname=@HOSTNAME@
+firstboot --reconfig
+
+sshkey --username=root "@SSHKEY@"
+
+rootpw --plaintext @VMPASSWD@
+
+poweroff
+
+clearpart --all --initlabel --disklabel=gpt
+bootloader --timeout=1
+
+# Manual layout (NIST):
+reqpart --add-boot
+part pv.01 --size=42000 --grow
+volgroup HostVG pv.01
+logvol swap --vgname=HostVG --name=swap --fstype=swap --recommended
+logvol none --vgname=HostVG --name=HostPool --thinpool --size=40000 --grow
+# rootfs.img is 10G, some versions of anaconda require a minimum of
+# 3*rootfs.size, so setting this to 31000
+logvol /    --vgname=HostVG --name=root --thin --poolname=HostPool --fsoptions="defaults,discard" --size=31000
+logvol /var --vgname=HostVG --name=var --thin --poolname=HostPool --fsoptions="defaults,discard" --size=15000
+logvol /var/log --vgname=HostVG --name=log --thin --poolname=HostPool --fsoptions="defaults,discard" --size=8000
+logvol /var/log/audit --vgname=HostVG --name=audit --thin --poolname=HostPool --fsoptions="defaults,discard" --size=2000
+logvol /home --vgname=HostVG --name=home --thin --poolname=HostPool --fsoptions="defaults,discard" --size=1000
+logvol /tmp --vgname=HostVG --name=tmp --thin --poolname=HostPool --fsoptions="defaults,discard" --size=1000
+
+#
+# The trick is to loop in the squashfs image as a device
+# from the host
+#
+liveimg --url="file:///mnt/livesrc/LiveOS/rootfs.img"
+
+%pre
+# Assumption: A virtio device with the serial livesrc is passed, pointing
+# to the squashfs on the host.
+mkdir -p /mnt/livesrc
+mount /dev/disk/by-id/virtio-livesrc /mnt/livesrc
+%end
+
+%post
+set -x
+imgbase --debug layout --init
+%end
