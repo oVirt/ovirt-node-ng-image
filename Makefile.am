@@ -49,7 +49,12 @@ product.img:
 	bash scripts/create-product-img.sh $@
 
 offline-installation-iso: product.img
-	PRODUCTIMG=$(PWD)/product.img BOOTISO=$(BOOTISO) SQUASHFS=$(SQUASHFSFILENAME) DERVICEBOOTISOSCRIPT=scripts/derive-boot-iso.sh bash scripts/create-nightly-boot-iso.sh
+	PRODUCTIMG=$(PWD)/product.img \
+			   BOOTISO=$(BOOTISO) \
+			   SQUASHFS=$(SQUASHFSFILENAME) \
+			   VERSION=$(PACKAGE_VERSION) \
+			   DERVICEBOOTISOSCRIPT=scripts/derive-boot-iso.sh \
+			   bash scripts/create-nightly-boot-iso.sh
 
 @BOOTISO@:
 	curl $(CURLOPTS) -LO $(BOOTISOURL)
