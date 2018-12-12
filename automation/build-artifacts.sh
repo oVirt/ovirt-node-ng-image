@@ -116,7 +116,7 @@ EOF
 
 prepare
 build
-check_iso
+#check_iso
 [[ $STD_CI_STAGE = "build-artifacts" ]] && checksum || :
 
 echo "Done."
