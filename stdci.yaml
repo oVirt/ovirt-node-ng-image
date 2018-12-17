@@ -1,5 +1,7 @@
 ---
 stage:
+  - check-merged
+  - build-artifacts
   - check-patch:
       runtime-requirements:
         support-nesting-level: 2
