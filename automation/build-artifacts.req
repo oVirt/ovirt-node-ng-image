@@ -10,3 +10,4 @@ expect
 pigz
 openssh
 openssh-clients
+wget
