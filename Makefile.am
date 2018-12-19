@@ -57,7 +57,7 @@ offline-installation-iso: product.img
 			   bash scripts/create-nightly-boot-iso.sh
 
 @BOOTISO@:
-	curl $(CURLOPTS) -LO $(BOOTISOURL)
+	wget --timeout=120 $(BOOTISOURL)
 
 LMC ?= livemedia-creator
 %.squashfs.img: data/%.ks @BOOTISO@
