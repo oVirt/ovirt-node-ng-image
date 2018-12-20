@@ -23,6 +23,8 @@ prepare() {
     virsh list --name | xargs -rn1 virsh destroy || :
     virsh list --all --name | xargs -rn1 virsh undefine --remove-all-storage || :
     losetup -O BACK-FILE | grep -v BACK-FILE | grep iso$ | xargs -r umount -dvf ||:
+
+    virt-host-validate ||:
 }
 
 build() {
