@@ -18,6 +18,9 @@ prepare() {
     mkdir -p "$ARTIFACTSDIR"
 
     mknod /dev/kvm c 10 232 || :
+    mknod /dev/vhost-net c 10 238 || :
+    mkdir /dev/net || :
+    mknod /dev/net/tun c 10 200 || :
     seq 0 9 | xargs -I {} mknod /dev/loop{} b 7 {} || :
 
     virsh list --name | xargs -rn1 virsh destroy || :
