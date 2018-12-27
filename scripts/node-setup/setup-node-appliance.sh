@@ -7,6 +7,7 @@ set -eo pipefail
 NODE_SETUP_PATH=$(dirname $(realpath $0))
 MAX_VM_MEM="${MAX_VM_MEM:-2048}"
 MAX_VM_CPUS="${MAX_VM_CPUS:-2}"
+ISO_INSTALL_TIMEOUT="${ISO_INSTALL_TIMEOUT:--1}"
 WORKDIR="${WORKDIR:-${HOME/root/var/lib}/ovirt-node}"
 APPLIANCE_DOMAIN="appliance.net"
 
@@ -265,16 +266,20 @@ EOF
         --vcpus $MAX_VM_CPUS \
         --cpu host \
         --location "$node_iso_path" \
-        --extra-args "inst.ks=file:///node-iso-install.ks console=ttyS0" \
+        --extra-args "inst.ks=file:///node-iso-install.ks inst.sshd=1 console=ttyS0" \
         --initrd-inject "$ksfile" \
         --graphics none \
         --noreboot \
         --check all=off \
-        --wait -1 \
+        --wait $ISO_INSTALL_TIMEOUT \
         --os-variant rhel7 \
         --noautoconsole \
         --rng /dev/urandom \
-        --disk path=$diskimg,size=60 > "$logfile" || die "virt-install failed"
+        --disk path=$diskimg,size=60 > "$logfile" || {
+            local ip=$(get_vm_ip $name)
+            echo "$name: node is available at $ip"
+            die "virt-install timed out"
+        }
 
     if [[ -z $shutdown ]]
     then
