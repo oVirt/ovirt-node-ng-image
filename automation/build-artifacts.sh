@@ -38,6 +38,7 @@ build() {
         export SHIP_OVIRT_INSTALLCLASS=1
         ./autogen.sh --with-tmpdir=/var/tmp --with-distro=${dist}
     else
+        export SSG_TARGET_XML=/usr/share/xml/scap/ssg/content/ssg-centos7-ds.xml
         ./autogen.sh --with-tmpdir=/var/tmp
     fi
 

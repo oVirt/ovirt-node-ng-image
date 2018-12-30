@@ -18,6 +18,7 @@ SRCDIR=$DATADIR/pixmaps
 PRDDIR=product/
 PIXMAPDIR=$PRDDIR/usr/share/anaconda/pixmaps/
 KSDIR=$PRDDIR/usr/share/anaconda/
+SSGDIR=$PRDDIR/usr/share/xml/scap/ssg/content
 
 mkdir -p "$PRDDIR" "$PIXMAPDIR" "$KSDIR"
 cp "$SRCDIR"/sidebar-logo.png "$PIXMAPDIR/"
@@ -26,6 +27,11 @@ if [[ -n $SHIP_OVIRT_INSTALLCLASS ]]; then
     inst_class_dir=$PRDDIR/run/install/product/pyanaconda/installclasses
     mkdir -p $inst_class_dir
     cp $DATADIR/ovirt.py $inst_class_dir
+fi
+
+if [[ -n $SSG_TARGET_XML ]]; then
+    mkdir -p $SSGDIR
+    ln -sf $SSG_TARGET_XML $SSGDIR/ssg-onn${VERSION:0:1}-ds.xml
 fi
 
 # FIXME we could deliver the ks in the product.img
