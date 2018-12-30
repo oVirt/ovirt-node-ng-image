@@ -67,6 +67,7 @@ AC_SUBST([OVIRTRELEASERPMURL])
 AC_CONFIG_FILES([
 	Makefile
 	data/ovirt-node-ng-image.ks
+	data/centos.ks
 ])
 
 AC_OUTPUT
