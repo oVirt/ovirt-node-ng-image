@@ -87,17 +87,50 @@ cleanup() {
     losetup -v -D ||:
 }
 
+fetch_remote() {
+    local sshkey=$1
+    local addr=$2
+    local path=$3
+    local dest=$4
+    local compress=$5
+
+    scp -o "UserKnownHostsFile /dev/null" \
+        -o "StrictHostKeyChecking no" \
+        -i $sshkey -r root@$addr:$path $dest ||:
+
+    [[ -n $compress ]] && {
+        tar czf $dest.tgz $dest && mv $dest.tgz $ARTIFACTSDIR
+    }||:
+}
+
 check_iso() {
-  ./scripts/node-setup/setup-node-appliance.sh -i ovirt-node*.iso -p ovirt
-  cat *nodectl-check*.log
+    ISO_INSTALL_TIMEOUT=45 ./scripts/node-setup/setup-node-appliance.sh \
+        -i ovirt-node*.iso \
+        -p ovirt > setup-iso.log 2>&1 || setup_rc=$?
 
-  status1=$(grep -Po "(?<=Status: ).*" *nodectl-check*.log)
-  status2=$(grep Status network-check.log |cut -d' ' -f2)
+    cat *nodectl-check*.log
 
-  [[ "$status1" == *OK* || "$status2" == *OK* ]] || {
-    echo "Invalid node status"
-    exit 1
-  }
+    local name=$(grep available setup-iso.log | cut -d: -f1)
+    local addr=$(grep -Po "(?<=at ).*" setup-iso.log)
+    local wrkdir=$(grep -Po "(?<=WORKDIR: ).*" setup-iso.log)
+    local sshkey="$wrkdir/sshkey-${name}"
+
+    fetch_remote "$sshkey" "$addr" "/tmp" "init_tmp" "1"
+    fetch_remote "$sshkey" "$addr" "/var/log" "init_var_log" "1"
+
+    [[ $setup_rc -ne 0 ]] && {
+        mv ovirt-node*.iso $ARTIFACTSDIR
+        echo "ISO install failed, exiting"
+        exit 1
+    }
+
+    status1=$(grep -Po "(?<=Status: ).*" *nodectl-check*.log)
+    status2=$(grep Status network-check.log |cut -d' ' -f2)
+
+    [[ "$status1" == *OK* || "$status2" == *OK* ]] || {
+        echo "Invalid node status"
+        exit 1
+    }
 }
 
 checksum() {
@@ -122,6 +155,7 @@ EOF
 
 prepare
 build
-[[ $STD_CI_STAGE = "build-artifacts" ]] && checksum || check_iso
+[[ $STD_CI_STAGE = "check-patch" ]] && check_iso
+[[ $STD_CI_STAGE = "build-artifacts" ]] && checksum
 
 echo "Done."
