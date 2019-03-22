@@ -15,7 +15,7 @@ dnl Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
 dnl MA  02110-1301, USA.  A copy of the GNU General Public License is
 dnl also available at http://www.gnu.org/copyleft/gpl.html.
 
-define([VERSION_NUMBER], [4.3.2])
+define([VERSION_NUMBER], [4.3.3])
 define([DISTRO], [centos])
 define([RELEASEVER], [0.0])
 
@@ -59,9 +59,9 @@ AC_SUBST([TMPDIR])
 
 AC_ARG_WITH([ovirt-release-rpm-url],
     [AS_HELP_STRING([--with-ovirt-release-rpm-url=URL],
-        [URL to the ovirt-release rpm (default: https://resources.ovirt.org/pub/yum-repo/ovirt-release43.rpm)])],
+        [URL to the ovirt-release rpm (default: https://resources.ovirt.org/pub/yum-repo/ovirt-release43-pre.rpm)])],
     [OVIRTRELEASERPMURL="$withval"],
-    [OVIRTRELEASERPMURL="https://resources.ovirt.org/pub/yum-repo/ovirt-release43.rpm"])
+    [OVIRTRELEASERPMURL="https://resources.ovirt.org/pub/yum-repo/ovirt-release43-pre.rpm"])
 AC_SUBST([OVIRTRELEASERPMURL])
 
 AC_CONFIG_FILES([
