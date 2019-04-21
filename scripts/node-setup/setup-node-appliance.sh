@@ -12,7 +12,8 @@ WORKDIR="${WORKDIR:-${HOME/root/var/lib}/ovirt-node}"
 APPLIANCE_DOMAIN="appliance.net"
 
 CENTOS_MIRROR="${CENTOS_MIRROR:-http://mirror.centos.org}"
-BOOTISO_URL="${CENTOS_MIRROR}/centos/7/os/x86_64/images/boot.iso"
+CENTOS_BOOTISO_URL="${CENTOS_MIRROR}/centos/7/os/x86_64/images/boot.iso"
+BOOTISO_URL="${BOOTISO_URL:-$CENTOS_BOOTISO_URL}"
 RELEASE_RPM=
 
 ####################
@@ -108,6 +109,19 @@ expect "~]# " { send "exit\r" }
 EOF
     chmod +x $expect_script
     $expect_script > network-check.log 2>&1 ||:
+}
+
+append_ssg_profile() {
+    local ksfile=$1
+
+    if [[ -n $SSG_PROFILE ]]; then
+        cat << EOF >> $ksfile
+%addon org_fedora_oscap
+content-type = scap-security-guide
+profile = $SSG_PROFILE
+%end
+EOF
+    fi
 }
 
 run_nodectl_check() {
@@ -254,6 +268,9 @@ poweroff
 clearpart --all --initlabel --disklabel=gpt
 bootloader --timeout=1
 EOF
+
+    append_ssg_profile "$ksfile"
+
     sed 's/^imgbase/imgbase --debug/' $tmpdir/*ks* >> $ksfile
     umount $tmpdir && rmdir $tmpdir
 
@@ -320,6 +337,8 @@ setup_node() {
         -e "s#@SSHKEY@#$ssh#" \
         -e "s#@VMPASSWD@#$vmpasswd#" \
         $kickstart_in > $ksfile
+
+    append_ssg_profile "$ksfile"
 
     [[ ! -e "$bootiso" ]] && {
         echo "$name: Downloading $BOOTISO_URL..."
