@@ -37,10 +37,6 @@ timezone --utc Etc/UTC
 
 liveimg --url=file:///run/install/repo/$DST
 
-# FIXME This should be fixed more elegantly with
-# https://bugzilla.redhat.com/663099#c14
-autopart --type=thinp
-
 %post --erroronfail
 imgbase layout --init
 %end

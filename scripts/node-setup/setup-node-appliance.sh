@@ -266,6 +266,7 @@ sshkey --username=root "$ssh"
 rootpw --plaintext $vmpasswd
 poweroff
 clearpart --all --initlabel --disklabel=gpt
+autopart --type=thinp
 bootloader --timeout=1
 EOF
 
