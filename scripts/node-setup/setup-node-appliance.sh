@@ -293,7 +293,7 @@ EOF
         --os-variant rhel7 \
         --noautoconsole \
         --rng /dev/urandom \
-        --disk path=$diskimg,size=60 > "$logfile" || {
+        --disk path=$diskimg,size=65 > "$logfile" || {
             local ip=$(get_vm_ip $name)
             echo "$name: node is available at $ip"
             die "virt-install timed out"
@@ -348,7 +348,7 @@ setup_node() {
         echo "$name: Using $bootiso"
     }
 
-    qemu-img create -q -f qcow2 $diskimg 60G || die "Failed creating disk"
+    qemu-img create -q -f qcow2 $diskimg 65G || die "Failed creating disk"
 
     echo "$name: Installing $squashfs to $diskimg..."
     echo "$name: Install log file is $logfile"
