@@ -360,7 +360,7 @@ setup_node() {
         --vcpus $MAX_VM_CPUS \
         --cpu host \
         --location $bootiso \
-        --extra-args "inst.ks=file:///node-install.ks console=ttyS0" \
+        --extra-args "inst.ks=file:///node-install.ks console=ttyS0 inst.sshd=1" \
         --initrd-inject $ksfile \
         --check disk_size=off,path_in_use=off \
         --graphics none \

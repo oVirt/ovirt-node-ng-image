@@ -26,7 +26,7 @@ logvol swap --vgname=HostVG --name=swap --fstype=swap --recommended
 logvol none --vgname=HostVG --name=HostPool --thinpool --size=40000 --grow
 # rootfs.img is 10G, some versions of anaconda require a minimum of
 # 3*rootfs.size, so setting this to 31000
-logvol /    --vgname=HostVG --name=root --thin --poolname=HostPool --fsoptions="defaults,discard" --size=31000
+logvol /    --vgname=HostVG --name=root --thin --poolname=HostPool --fsoptions="defaults,discard" --size=32000
 logvol /var --vgname=HostVG --name=var --thin --poolname=HostPool --fsoptions="defaults,discard" --size=15000
 logvol /var/log --vgname=HostVG --name=log --thin --poolname=HostPool --fsoptions="defaults,discard" --size=8000
 logvol /var/log/audit --vgname=HostVG --name=audit --thin --poolname=HostPool --fsoptions="defaults,discard" --size=2000
