@@ -11,5 +11,6 @@ pigz
 openssh
 openssh-clients
 wget
-python-jinja2
-PyYAML
+python2-jinja2
+python2-pyyaml
+libosinfo

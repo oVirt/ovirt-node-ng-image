@@ -30,17 +30,36 @@ prepare() {
     virt-host-validate ||:
 }
 
+prepare_osinfo_db() {
+    local osinfo_dir="/usr/share/osinfo/os/ovirt.org"
+    mkdir -p ${osinfo_dir}
+    cp data/ovirt-osinfo.xml ${osinfo_dir}/ovirt-4.xml
+}
+
 build() {
     dist="$(rpm --eval %{dist})"
     dist=${dist##.}
 
-    if [[ ${dist} = fc* ]]; then
-        export SHIP_OVIRT_INSTALLCLASS=1
-        ./autogen.sh --with-tmpdir=/var/tmp --with-distro=${dist}
-    else
-        export SSG_TARGET_XML=/usr/share/xml/scap/ssg/content/ssg-centos7-ds.xml
-        ./autogen.sh --with-tmpdir=/var/tmp
-    fi
+    case ${dist} in
+        fc*)
+            fcrel="${dist##fc}"
+            export SHIP_OVIRT_INSTALLCLASS=1
+            ./autogen.sh \
+                --with-distro=fedora \
+                --with-bootisourl=http://download.fedoraproject.org/pub/fedora/linux/releases/${fcrel}/Server/x86_64/os/images/boot.iso
+            ;;
+        el7)
+            export SSG_TARGET_XML=/usr/share/xml/scap/ssg/content/ssg-centos7-ds.xml
+            ./autogen.sh
+            ;;
+        el8)
+            prepare_osinfo_db
+            export SHIP_OVIRT_INSTALLCLASS=1
+            ./autogen.sh \
+                --with-distro=centos8 \
+                --with-bootisourl=http://mirror.centos.org/centos/8/BaseOS/x86_64/os/images/boot.iso
+            ;;
+    esac
 
     make squashfs &
     tail -f virt-install.log --pid=$! --retry ||:
@@ -108,8 +127,6 @@ check_iso() {
         -i ovirt-node*.iso \
         -p ovirt > setup-iso.log 2>&1 || setup_rc=$?
 
-    cat *nodectl-check*.log
-
     local name=$(grep available setup-iso.log | cut -d: -f1)
     local addr=$(grep -Po "(?<=at ).*" setup-iso.log)
     local wrkdir=$(grep -Po "(?<=WORKDIR: ).*" setup-iso.log)
@@ -119,10 +136,12 @@ check_iso() {
     fetch_remote "$sshkey" "$addr" "/var/log" "init_var_log" "1"
 
     [[ $setup_rc -ne 0 ]] && {
-        mv ovirt-node*.iso $ARTIFACTSDIR
+        mv ovirt-node*.iso *.tgz $ARTIFACTSDIR
         echo "ISO install failed, exiting"
         exit 1
     }
+
+    cat *nodectl-check*.log
 
     status1=$(grep -Po "(?<=Status: ).*" *nodectl-check*.log)
     status2=$(grep Status network-check.log |cut -d' ' -f2)

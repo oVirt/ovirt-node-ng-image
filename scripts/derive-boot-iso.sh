@@ -108,6 +108,7 @@ create_iso() {
       -graft-points \
       -A "$volid" \
       -V "$volid" \
+      -publisher "ovirt.org" \
       $TMPDIR
   cond_out isohybrid -u $NEWBOOTISO
   cond_out implantisomd5 --force $NEWBOOTISO

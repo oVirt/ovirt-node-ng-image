@@ -4,20 +4,38 @@
 #              NOT FOR INSTALLATION
 #
 
+url {{ data["url"] }}
+
+{%- for r_name, r_url in data["repos"].items() %}
+repo --name={{ r_name }} {{ r_url }}
+{%- endfor %}
+
+{%- if data["updates"] %}
+updates {{ data["updates"] }}
+{%- endif %}
+
+
 lang en_US.UTF-8
 keyboard us
 timezone --utc Etc/UTC
-network
+network --noipv6
 auth --enableshadow --passalgo=sha512
 selinux --enforcing
 rootpw --lock
 firstboot --reconfig
-
 clearpart --all --initlabel
 bootloader --timeout=1
 part / --size=5120 --fstype=ext4 --fsoptions=discard
-
 poweroff
+
+
+%packages --excludedocs --ignoremissing {{ data["packages-switch"] }}
+dracut-config-generic
+-dracut-config-rescue
+{%- for pkg in data["packages"] %}
+{{ pkg }}
+{%- endfor %}
+%end
 
 
 %post --erroronfail
@@ -26,8 +44,10 @@ mkdir -p /etc/yum.repos.d
 
 # Adding upstream oVirt vdsm
 # 1. Install oVirt release file with repositories
-yum install -y --nogpgcheck @OVIRTRELEASERPMURL@
+yum install -y --nogpgcheck {{ releaserpm }}
 yum -y --nogpgcheck update
+
+yum config-manager --set-enabled PowerTools || true
 
 # Adds the latest cockpit bits
 yum install --nogpgcheck -y cockpit
@@ -51,5 +71,11 @@ imgbase --debug --experimental \
   image-build \
   --postprocess \
   --set-nvr=$(rpm -q --qf "ovirt-node-ng-%{version}-0.$(date +%Y%m%d).0" ovirt-release-host-node)
-
 %end
+
+
+{%- for post in data["post"] %}
+%post
+{{ post }}
+%end
+{%- endfor %}

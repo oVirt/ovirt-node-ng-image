@@ -17,31 +17,30 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 
-from pyanaconda.installclass import BaseInstallClass
-from pyanaconda.product import productName
-from pyanaconda.kickstart import getAvailableDiskSpace
-from pyanaconda.storage.partspec import PartSpec
-from pyanaconda.platform import platform
-from pyanaconda.storage.autopart import swap_suggestion
-from blivet.size import Size
 from pykickstart.constants import AUTOPART_TYPE_LVM_THINP
 
-__all__ = ["OvirtBaseInstallClass"]
+from blivet.size import Size
+from pyanaconda.core.constants import STORAGE_MIN_PARTITION_SIZES
+from pyanaconda.installclasses.centos import CentOSBaseInstallClass
+from pyanaconda.installclasses.rhel import RHELBaseInstallClass
+from pyanaconda.kickstart import getAvailableDiskSpace
+from pyanaconda.modules.common.constants.objects import AUTO_PARTITIONING
+from pyanaconda.modules.common.constants.services import STORAGE
+from pyanaconda.platform import platform
+from pyanaconda.product import productName
+from pyanaconda.storage.autopart import swap_suggestion
+from pyanaconda.storage.partspec import PartSpec
+
+__all__ = ["OvirtInstallClass"]
 
 
-class OvirtBaseInstallClass(BaseInstallClass):
-    name = "oVirt Node Next"
-    sortPriority = 21000
-    hidden = not productName.startswith("oVirt")
-
-    efi_dir = "fedora"
-    default_autopart_type = AUTOPART_TYPE_LVM_THINP
-
-    # there is a RHV branded help content variant
+class OvirtBaseClass:
     help_folder = "/usr/share/anaconda/help/rhv"
 
-    def configure(self, anaconda):
-        BaseInstallClass.configure(self, anaconda)
+    def set_autopart_type(self):
+        from pyanaconda.ui.gui.spokes.lib import accordion
+        accordion.DEFAULT_AUTOPART_TYPE = AUTOPART_TYPE_LVM_THINP
+        STORAGE.get_proxy(AUTO_PARTITIONING).SetType(AUTOPART_TYPE_LVM_THINP)
 
     def setDefaultPartitioning(self, storage):
         autorequests = [PartSpec(mountpoint="/", fstype=storage.default_fstype,
@@ -81,7 +80,22 @@ class OvirtBaseInstallClass(BaseInstallClass):
                     autoreq.fstype = storage.default_fstype
 
         storage.autopart_requests = autorequests
-        storage.autopart_type = AUTOPART_TYPE_LVM_THINP
 
-    def __init__(self):
-        BaseInstallClass.__init__(self)
+    def setStorageChecker(self, storage_checker):
+        # TODO: add checks on root_device_types and must_not_be_on_root once
+        # those are added back to storage_utils
+        # /var must be at least 10GB, /boot must be at least 1GB
+        storage_checker.update_constraint(STORAGE_MIN_PARTITION_SIZES, {
+            '/var': Size("10 GiB"),
+            '/boot': Size("1 GiB")
+        })
+
+
+class OvirtInstallClass(OvirtBaseClass, CentOSBaseInstallClass):
+    name = "oVirt Node Next"
+    hidden = not productName.startswith("oVirt")
+    sortPriority = 21000
+
+    def configure(self, anaconda):
+        CentOSBaseInstallClass.configure(self, anaconda)
+        self.set_autopart_type()

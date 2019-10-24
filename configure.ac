@@ -16,7 +16,6 @@ dnl MA  02110-1301, USA.  A copy of the GNU General Public License is
 dnl also available at http://www.gnu.org/copyleft/gpl.html.
 
 define([VERSION_NUMBER], [4.4.0])
-define([DISTRO], [centos])
 define([RELEASEVER], [0.0])
 
 AC_INIT([ovirt-node-ng-image-update], VERSION_NUMBER, [devel@ovirt.org])
@@ -33,8 +32,9 @@ AC_SUBST([IMAGENAME])
 
 AC_ARG_WITH([distro],
     [AS_HELP_STRING([--with-distro=distro], [Base node-ng on distro (default: centos)])],
-    [],
-    [with_distro=centos])
+    [DISTRO="$withval"],
+    [DISTRO="centos"])
+AC_SUBST([DISTRO])
 
 AC_ARG_WITH([bootisourl],
     [AS_HELP_STRING([--with-bootisourl=URL],
@@ -54,7 +54,7 @@ AC_ARG_WITH([tmpdir],
     [AS_HELP_STRING([--with-tmpdir=DIR],
         [path to TMP directory (default: /tmp)])],
     [TMPDIR="$withval"],
-    [TMPDIR="/tmp"])
+    [TMPDIR="/var/tmp"])
 AC_SUBST([TMPDIR])
 
 AC_ARG_WITH([ovirt-release-rpm-url],
@@ -66,19 +66,6 @@ AC_SUBST([OVIRTRELEASERPMURL])
 
 AC_CONFIG_FILES([
 	Makefile
-	data/ovirt-node-ng-image.ks
-	data/centos.ks
 ])
 
 AC_OUTPUT
-
-# ksflatten doesn't work well in el7, so lets make our distro specific changes
-# manually here
-distro_ks=centos
-case "${with_distro}" in (fc*)
-        distro_ks=fedora
-        fcrel="${with_distro##fc}"
-        bootisourl=http://download.fedoraproject.org/pub/fedora/linux/releases/${fcrel}/Server/x86_64/os/images/boot.iso
-        sed -i s#^BOOTISOURL.*#BOOTISOURL=${bootisourl}# Makefile
-;; esac
-cat $(dirname $(realpath $0))/data/${distro_ks}.ks >> data/ovirt-node-ng-image.ks

@@ -19,9 +19,10 @@ SQUASHFSFILENAME = @IMAGENAME@.squashfs.img
 RPMMANIFESTNAME = @IMAGENAME@.manifest-rpm
 RPMUNSIGNEDNAME = @IMAGENAME@.unsigned-rpms
 
-EXTRA_DIST = \
-	data/centos.ks \
-	data/fedora.ks
+OVIRTRELEASERPM = @OVIRTRELEASERPMURL@
+DISTRO = @DISTRO@
+LMC_CPUS = 2
+LMC_MEM = 4096
 
 DISTCLEANFILES = \
 	aclocal.m4 \
@@ -59,9 +60,12 @@ offline-installation-iso: product.img
 @BOOTISO@:
 	wget --timeout=120 $(BOOTISOURL)
 
+data/%.ks: data/%.j2
+	scripts/renderks.py $(OVIRTRELEASERPM) $(DISTRO) > "$@"
+
 LMC ?= livemedia-creator
 %.squashfs.img: data/%.ks @BOOTISO@
-	$(LMC) $(LMCOPTS) --make-pxe-live --iso @BOOTISO@ --ks $< --resultdir build --tmp @TMPDIR@
+	$(LMC) $(LMCOPTS) --vcpus=$(LMC_CPUS) --ram=$(LMC_MEM) --kernel-args="ipv6.disable=1" --make-pxe-live --iso @BOOTISO@ --ks $< --resultdir build --tmp @TMPDIR@
 	mv -v build/*squash* "$@"
 
 # Short TMPDIR otherwise we run into trouble with guestfish < 1.33.27-1.fc24

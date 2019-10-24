@@ -240,6 +240,17 @@ setup_appliance() {
     rm $cidata
 }
 
+virt_install_location() {
+    local iso=$1
+    local vver=$(virt-install --version | tr -d .)
+
+    if [[ $vver -ge 210 ]]; then
+       echo "$iso,kernel=isolinux/vmlinuz,initrd=isolinux/initrd.img"
+    else
+       echo "$iso"
+    fi
+}
+
 setup_node_iso() {
     local name=$1
     local node_iso_path=$2
@@ -283,7 +294,7 @@ EOF
         --memory $MAX_VM_MEM \
         --vcpus $MAX_VM_CPUS \
         --cpu host \
-        --location "$node_iso_path" \
+        --location "$(virt_install_location $node_iso_path)" \
         --extra-args "inst.ks=file:///node-iso-install.ks inst.sshd=1 console=ttyS0" \
         --initrd-inject "$ksfile" \
         --graphics none \
