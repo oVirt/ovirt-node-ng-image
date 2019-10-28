@@ -123,6 +123,11 @@ fetch_remote() {
 }
 
 check_iso() {
+    if [ "$(rpm --eval "%dist"|cut -c2-4)" == "el8" ] ; then
+        echo "skip testing on el8 due to broken virt-install known issue"
+        exit 0
+    fi
+
     ISO_INSTALL_TIMEOUT=45 ./scripts/node-setup/setup-node-appliance.sh \
         -i ovirt-node*.iso \
         -p ovirt > setup-iso.log 2>&1 || setup_rc=$?
