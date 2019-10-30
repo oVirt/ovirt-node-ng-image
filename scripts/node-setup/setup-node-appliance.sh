@@ -301,7 +301,7 @@ EOF
         --noreboot \
         --check all=off \
         --wait $ISO_INSTALL_TIMEOUT \
-        --os-variant rhel7 \
+        --os-variant rhel8.0 \
         --noautoconsole \
         --rng /dev/urandom \
         --disk path=$diskimg,size=65 > "$logfile" || {
@@ -377,7 +377,7 @@ setup_node() {
         --graphics none \
         --noreboot \
         --wait -1 \
-        --os-variant rhel7 \
+        --os-variant rhel8.0 \
         --noautoconsole \
         --rng /dev/urandom \
         --disk path=$diskimg,bus=virtio,cache=unsafe,discard=unmap,format=qcow2 \

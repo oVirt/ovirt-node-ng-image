@@ -4,6 +4,7 @@
 
 set -e
 
+SELFDIR=$(dirname $(realpath $0))
 BOOTISO=$(realpath $1)
 SQUASHFS=$(realpath $2)
 NEWBOOTISO=$(realpath ${3:-$(dirname $BOOTISO)/new-$(basename $BOOTISO)})
@@ -44,6 +45,14 @@ EOK
   # Add branding
   local os_release=$(mktemp -p /var/tmp)
   in_squashfs "cat /etc/os-release" > ${os_release}
+
+  # Build treeinfo from os-release
+  . ${os_release}
+  ${SELFDIR}/mktreeinfo.py --product ${ID} \
+                           --version ${VERSION_ID} \
+                           --variant "ovirt-node" \
+                           --arch "x86_64" \
+                           .treeinfo
 
   # Which install image should we use as stage2
   local install_img="LiveOS/squashfs.img"
