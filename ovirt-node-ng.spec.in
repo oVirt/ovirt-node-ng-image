@@ -58,30 +58,14 @@ fi
 set -e
 # Some magic to ensure that imgbase from
 # the new image is used for updates
+export IMGBASED_IMAGE_UPDATE_RPM=$(lsof -p $PPID 2>/dev/null | grep image-update | awk '{print $9}')
 export MNTDIR="$(mktemp -d)"
 mount "%{_node_image_file}" "$MNTDIR"
 mount "$MNTDIR"/LiveOS/rootfs.img "$MNTDIR"
-export PYTHONPATH="$MNTDIR"/usr/lib/python2.7/site-packages/:$PYTHONPATH
-imgbase --debug update --format liveimg %{_node_image_file} >> /tmp/imgbased.log 2>&1
-VOL=$(imgbase layer --volume-path $(imgbase layer --latest))
+export PYTHONPATH=$(find $MNTDIR/usr/lib/python* -name imgbased -type d -exec dirname {} \; | sort | tail -1):$PYTHONPATH
+imgbase --debug update --format liveimg %{_node_image_file} >> /var/log/imgbased.log 2>&1
 umount "$MNTDIR"
 umount "$MNTDIR"
-
-UPDATERPM="/tmp/updaterpm.path"
-lsof | grep image-update | awk '{print $9}' > $UPDATERPM
-
-UPDATELOG="/tmp/image-update.log"
-echo "List of open files:" > $UPDATELOG
-lsof > $UPDATELOG
-
-mount "$VOL" "$MNTDIR"
-rpm -Uvh --quiet --justdb --root "${MNTDIR}" $(cat ${UPDATERPM}) > /dev/null 2>&1
-RC=$?
-umount "${MNTDIR}"
-
-rm "${UPDATERPM}"
-[ $RC = 0 ] && rm "${UPDATELOG}"
-rmdir "${MNTDIR}"
 
 %files
 %dir %{_node_image_dir}
