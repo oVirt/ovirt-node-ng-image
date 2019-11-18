@@ -5,6 +5,7 @@ centos8:
     appstream: --mirrorlist=http://mirrorlist.centos.org/?repo=AppStream&release=8&arch=$basearch
     powertools: --mirrorlist=http://mirrorlist.centos.org/?repo=PowerTools&release=8&arch=$basearch
     extras: --mirrorlist=http://mirrorlist.centos.org/?repo=Extras&release=8&arch=$basearch
+  packages-switch: --excludeWeakdeps
   packages:
     - dracut-live
 
