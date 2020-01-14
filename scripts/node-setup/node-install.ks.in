@@ -48,5 +48,6 @@ mount /dev/disk/by-id/virtio-livesrc /mnt/livesrc
 
 %post
 set -x
+virsh net-autostart default --disable
 imgbase --debug layout --init
 %end
