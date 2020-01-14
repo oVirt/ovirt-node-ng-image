@@ -56,6 +56,10 @@ yum install --nogpgcheck --nodocs -y cockpit
 #     the mist recent content (right after repo composes/releases)
 sed -i "/^mirrorlist/ d ; s/^#baseurl/baseurl/" $(find /etc/yum.repos.d/*ovirt*.repo -type f ! -name "*dep*")
 
+# Try to work around failure to sync repo
+dnf clean all
+rm -rf /var/cache/dnf
+
 # 2. Install oVirt Node release and placeholder
 # (exclude ovirt-node-ng-image-update to prevent the obsoletes logic)
 yum install -y --nogpgcheck --nodocs \

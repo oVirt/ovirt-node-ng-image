@@ -24,6 +24,7 @@ from pyanaconda.core.constants import STORAGE_MIN_PARTITION_SIZES
 from pyanaconda.installclasses.centos import CentOSBaseInstallClass
 from pyanaconda.installclasses.rhel import RHELBaseInstallClass
 from pyanaconda.kickstart import getAvailableDiskSpace
+from pyanaconda.flags import BootArgs
 from pyanaconda.modules.common.constants.objects import AUTO_PARTITIONING
 from pyanaconda.modules.common.constants.services import STORAGE
 from pyanaconda.platform import platform
@@ -55,6 +56,9 @@ class OvirtBaseClass:
                         PartSpec(mountpoint="/var",
                                  fstype=storage.default_fstype,
                                  size=Size("15GiB"), thin=True, lv=True),
+                        PartSpec(mountpoint="/var/crash",
+                                 fstype=storage.default_fstype,
+                                 size=Size("10GiB"), thin=True, lv=True),
                         PartSpec(mountpoint="/var/log",
                                  fstype=storage.default_fstype,
                                  size=Size("8GiB"), thin=True, lv=True),
@@ -66,10 +70,19 @@ class OvirtBaseClass:
         if bootreqs:
             autorequests.extend(bootreqs)
 
-        disk_space = getAvailableDiskSpace(storage)
-        swp = swap_suggestion(disk_space=disk_space)
-        autorequests.append(PartSpec(fstype="swap", size=swp, grow=False,
-                                     lv=True, encrypted=True))
+        minireqs = {"/": "6GiB", "/var": "8GiB", "/boot": "1GiB"}
+        layout = BootArgs().get("node_storage", "").lower().strip().split(",")
+        minimal = "minimal" in layout
+
+        if minimal:
+            autorequests = [x for x in autorequests
+                            if minireqs.get(x.mountpoint)]
+
+        if "noswap" not in layout:
+            disk_space = getAvailableDiskSpace(storage)
+            swp = swap_suggestion(disk_space=disk_space)
+            autorequests.append(PartSpec(fstype="swap", size=swp, grow=False,
+                                         lv=True, encrypted=True))
 
         for autoreq in autorequests:
             if autoreq.fstype is None:
@@ -78,6 +91,10 @@ class OvirtBaseClass:
                     autoreq.size = Size("1GiB")
                 else:
                     autoreq.fstype = storage.default_fstype
+            if minimal:
+                req = minireqs.get(autoreq.mountpoint)
+                if req:
+                    autoreq.size = Size(req)
 
         storage.autopart_requests = autorequests
 
@@ -86,7 +103,7 @@ class OvirtBaseClass:
         # those are added back to storage_utils
         # /var must be at least 10GB, /boot must be at least 1GB
         storage_checker.update_constraint(STORAGE_MIN_PARTITION_SIZES, {
-            '/var': Size("10 GiB"),
+            '/var': Size("6 GiB"),
             '/boot': Size("1 GiB")
         })
 
