@@ -10,6 +10,8 @@ MAX_VM_CPUS="${MAX_VM_CPUS:-2}"
 ISO_INSTALL_TIMEOUT="${ISO_INSTALL_TIMEOUT:--1}"
 WORKDIR="${WORKDIR:-${HOME/root/var/lib}/ovirt-node}"
 APPLIANCE_DOMAIN="appliance.net"
+LIBVIRT_NETWORK="ovirt-node-net"
+LIBVIRT_IP_OCTET="155"
 
 CENTOS_MIRROR="${CENTOS_MIRROR:-http://mirror.centos.org}"
 CENTOS_BOOTISO_URL="${CENTOS_MIRROR}/centos/7/os/x86_64/images/boot.iso"
@@ -53,7 +55,7 @@ do_ssh() {
 get_vm_ip() {
     local name=$1
 
-    local brdev=$(virsh net-info default | grep ^Bridge | awk '{print $2}')
+    local brdev=$(virsh net-info ${LIBVIRT_NETWORK} | grep ^Bridge | awk '{print $2}')
 
     for i in {1..30}
     do
@@ -81,6 +83,31 @@ get_vm_ip() {
     # Fallback - just use the ip in case ping is blocked for some reason, this
     # is the previous behavior
     [[ -n "$ips" ]] && echo $ips || die "get_vm_ip failed"
+}
+
+prepare_network() {
+    virsh -q net-info ${LIBVIRT_NETWORK} > /dev/null 2>&1 && return
+
+    tmpf=$(mktemp)
+    cat << EOF >> ${tmpf}
+<network>
+  <name>${LIBVIRT_NETWORK}</name>
+  <bridge name="virbr${LIBVIRT_IP_OCTET}" />
+  <forward mode='nat'>
+    <nat>
+      <port start='1024' end='65535'/>
+    </nat>
+  </forward>
+  <ip address="192.168.${LIBVIRT_IP_OCTET}.1" netmask="255.255.255.0">
+    <dhcp>
+      <range start='192.168.${LIBVIRT_IP_OCTET}.2' end='192.168.${LIBVIRT_IP_OCTET}.254'/>
+    </dhcp>
+  </ip>
+</network>
+EOF
+    virsh -q net-define ${tmpf} > /dev/null
+    virsh net-start ${LIBVIRT_NETWORK}
+    rm -f ${tmpf}
 }
 
 run_network_check() {
@@ -213,7 +240,7 @@ setup_appliance() {
         --ram $v_mem \
         --vcpus $v_cpus \
         --disk path=$diskimg,bus=ide \
-        --network network:default,model=virtio  \
+        --network network:${LIBVIRT_NETWORK},model=virtio  \
         --vnc \
         --noreboot \
         --boot hd \
@@ -304,6 +331,7 @@ EOF
         --os-variant rhel8.0 \
         --noautoconsole \
         --rng /dev/urandom \
+        --network network:${LIBVIRT_NETWORK},model=virtio  \
         --disk path=$diskimg,size=65 > "$logfile" || {
             local ip=$(get_vm_ip $name)
             echo "$name: node is available at $ip"
@@ -380,6 +408,7 @@ setup_node() {
         --os-variant rhel8.0 \
         --noautoconsole \
         --rng /dev/urandom \
+        --network network:${LIBVIRT_NETWORK},model=virtio  \
         --disk path=$diskimg,bus=virtio,cache=unsafe,discard=unmap,format=qcow2 \
         --disk path=$squashfs,readonly=on,device=disk,bus=virtio,serial=livesrc \
         > $logfile || die "virt-install failed"
@@ -467,6 +496,8 @@ main() {
     [[ ! -d "$WORKDIR" ]] && mkdir -p "$WORKDIR"
 
     echo "Using WORKDIR: $WORKDIR"
+
+    prepare_network
 
     [[ ! -z "$node_url" ]] && {
         node=${machine:-node-$RANDOM}
