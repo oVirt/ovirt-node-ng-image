@@ -45,12 +45,12 @@ mkdir -p /etc/yum.repos.d
 # Adding upstream oVirt vdsm
 # 1. Install oVirt release file with repositories
 yum install -y --nogpgcheck {{ releaserpm }}
-yum -y --nogpgcheck --nodocs update
+yum -y --nogpgcheck --nodocs --setopt=install_weak_deps=False update
 
 yum config-manager --set-enabled PowerTools || true
 
 # Adds the latest cockpit bits
-yum install --nogpgcheck --nodocs -y cockpit
+yum install --nogpgcheck --nodocs --setopt=install_weak_deps=False -y cockpit
 
 # 1.a Ensure that we use baseurls to ensure we always pick
 #     the mist recent content (right after repo composes/releases)
@@ -62,7 +62,7 @@ rm -rf /var/cache/dnf
 
 # 2. Install oVirt Node release and placeholder
 # (exclude ovirt-node-ng-image-update to prevent the obsoletes logic)
-yum install -y --nogpgcheck --nodocs \
+yum install -y --nogpgcheck --nodocs --setopt=install_weak_deps=False \
   --exclude ovirt-node-ng-image-update \
   ovirt-release-host-node \
   ovirt-node-ng-image-update-placeholder
