@@ -60,6 +60,18 @@ sed -i "/^mirrorlist/ d ; s/^#baseurl/baseurl/" $(find /etc/yum.repos.d/*ovirt*.
 dnf clean all
 rm -rf /var/cache/dnf
 
+# locate rpm binary
+find / -name rpm -type f
+
+# show rpm macros
+echo 'Architecture :'
+rpm --eval '%_arch'
+ARCH=$("rpm --eval %_arch")
+echo "Architecture : ${ARCH}" 
+
+# dump Yum vars 
+python -c 'import yum, json; yb = yum.YumBase(); print json.dumps(yb.conf.yumvar, indent=2)'
+
 # 2. Install oVirt Node release and placeholder
 # (exclude ovirt-node-ng-image-update to prevent the obsoletes logic)
 yum install -y --nogpgcheck --nodocs --setopt=install_weak_deps=False \
