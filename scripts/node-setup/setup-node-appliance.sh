@@ -9,6 +9,7 @@ MAX_VM_MEM="${MAX_VM_MEM:-2048}"
 MAX_VM_CPUS="${MAX_VM_CPUS:-2}"
 ISO_INSTALL_TIMEOUT="${ISO_INSTALL_TIMEOUT:--1}"
 WORKDIR="${WORKDIR:-${HOME/root/var/lib}/ovirt-node}"
+LOGDIR="${LOGDIR:-${WORKDIR}}"
 APPLIANCE_DOMAIN="appliance.net"
 LIBVIRT_NETWORK="ovirt-node-net"
 LIBVIRT_IP_OCTET="155"
@@ -225,7 +226,7 @@ setup_appliance() {
     local diskimg="$WORKDIR/$name.qcow2"
     local ovf="$WORKDIR/$name.ovf"
     local cidata="$WORKDIR/ci.iso"
-    local logfile="$WORKDIR/virt-install-$name.log"
+    local logfile="$LOGDIR/virt-install-$name.log"
 
     local ovf_mem=$(grep -Po "(?<=<rasd:Caption>)[^<]+(?= MB of memory)" $ovf)
     local ovf_cpus=$(grep -Po "(?<=<rasd:Caption>)[^<]+(?= virtual CPU)" $ovf)
@@ -242,7 +243,7 @@ setup_appliance() {
 
     echo "$name: Using $v_mem RAM and $v_cpus CPUs"
 
-    virt-install -q \
+    virt-install -d \
         --name $name \
         --ram $v_mem \
         --vcpus $v_cpus \
@@ -254,7 +255,7 @@ setup_appliance() {
         --cdrom $cidata \
         --os-type linux \
         --rng /dev/urandom \
-        --noautoconsole > $logfile || die "virt-install failed"
+        --noautoconsole > $logfile 2>&1 || die "virt-install failed"
 
     local ip=$(get_vm_ip $name)
     local fqdn=$name.$APPLIANCE_DOMAIN
@@ -294,7 +295,7 @@ setup_node_iso() {
 
     local ksfile="$WORKDIR/node-iso-install.ks"
     local diskimg="$WORKDIR/$name.qcow2"
-    local logfile="$WORKDIR/node-iso-virt-install-$name.log"
+    local logfile="$LOGDIR/node-iso-virt-install-$name.log"
     local ssh=$(cat $ssh_key.pub)
 
     local tmpdir=$(mktemp -d)
@@ -322,7 +323,7 @@ EOF
 
     echo "$name: Installing ISO to VM..."
 
-    virt-install -q \
+    virt-install -d \
         --name "$name" \
         --boot menu=off \
         --memory $MAX_VM_MEM \
@@ -339,7 +340,7 @@ EOF
         --noautoconsole \
         --rng /dev/urandom \
         --network network:${LIBVIRT_NETWORK},model=virtio  \
-        --disk path=$diskimg,size=65 > "$logfile" || {
+        --disk path=$diskimg,size=65 > "$logfile" 2>&1 || {
             local ip=$(get_vm_ip $name)
             echo "$name: node is available at $ip"
             die "virt-install timed out"
@@ -376,7 +377,7 @@ setup_node() {
     local squashfs="$WORKDIR/$name.squashfs.img"
     local diskimg="$WORKDIR/$name.qcow2"
     local ksfile="$WORKDIR/node-install.ks"
-    local logfile="$WORKDIR/virt-install-$name.log"
+    local logfile="$LOGDIR/virt-install-$name.log"
     local kickstart_in="$NODE_SETUP_PATH/node-install.ks.in"
     local ssh=$(cat $ssh_key.pub)
 
@@ -399,7 +400,7 @@ setup_node() {
     echo "$name: Installing $squashfs to $diskimg..."
     echo "$name: Install log file is $logfile"
 
-    virt-install -q \
+    virt-install -d \
         --name "$name" \
         --boot menu=off \
         --memory $MAX_VM_MEM \
@@ -418,7 +419,7 @@ setup_node() {
         --network network:${LIBVIRT_NETWORK},model=virtio  \
         --disk path=$diskimg,bus=virtio,cache=unsafe,discard=unmap,format=qcow2 \
         --disk path=$squashfs,readonly=on,device=disk,bus=virtio,serial=livesrc \
-        > $logfile || die "virt-install failed"
+        > $logfile 2>&1 || die "virt-install failed"
 
 
     if [[ -z $shutdown ]]
