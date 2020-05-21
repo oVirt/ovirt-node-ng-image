@@ -47,7 +47,7 @@ squashfs: $(SQUASHFSFILENAME) $(RPMMANIFESTNAME) $(RPMUNSIGNEDNAME)
 	@echo squashfs rpm-unsigned: $(RPMUNSIGNEDNAME)
 
 product.img:
-	bash scripts/create-product-img.sh $@
+	ISFINAL=@FINALBUILD@ bash scripts/create-product-img.sh $@
 
 offline-installation-iso: product.img
 	PRODUCTIMG=$(PWD)/product.img \
