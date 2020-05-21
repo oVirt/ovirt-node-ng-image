@@ -2,8 +2,8 @@
 # minor changes
 
 lang en_US.UTF-8
-keyboard us
-timezone --utc Etc/UTC
+keyboard --vckeymap=us --xlayouts=''
+timezone Etc/UTC --isUtc
 auth --enableshadow --passalgo=sha512
 selinux --enforcing
 network --bootproto=dhcp --hostname=@HOSTNAME@
@@ -13,7 +13,11 @@ sshkey --username=root "@SSHKEY@"
 
 rootpw --plaintext @VMPASSWD@
 
-poweroff
+# Shutdown after installation
+shutdown
+
+# Use text mode install
+text
 
 clearpart --all --initlabel --disklabel=gpt
 bootloader --timeout=1
@@ -49,4 +53,14 @@ mount /dev/disk/by-id/virtio-livesrc /mnt/livesrc
 %post
 set -x
 imgbase --debug layout --init
+%end
+
+%packages
+@^graphical-server-environment
+kexec-tools
+
+%end
+
+%addon com_redhat_kdump --enable --reserve-mb='auto'
+
 %end
