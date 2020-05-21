@@ -15,8 +15,7 @@ LIBVIRT_NETWORK="ovirt-node-net"
 LIBVIRT_IP_OCTET="155"
 
 CENTOS_MIRROR="${CENTOS_MIRROR:-http://mirror.centos.org}"
-CENTOS_BOOTISO_URL="${CENTOS_MIRROR}/centos/7/os/x86_64/images/boot.iso"
-BOOTISO_URL="${BOOTISO_URL:-$CENTOS_BOOTISO_URL}"
+CENTOS_INSTALLATION_SOURCE="${CENTOS_MIRROR}/centos/8/BaseOS/x86_64/os/"
 RELEASE_RPM=
 
 ####################
@@ -373,7 +372,6 @@ setup_node() {
 
     download_rpm_and_extract "$url" "$name" "squashfs.img"
 
-    local bootiso="$WORKDIR/boot.iso"
     local squashfs="$WORKDIR/$name.squashfs.img"
     local diskimg="$WORKDIR/$name.qcow2"
     local ksfile="$WORKDIR/node-install.ks"
@@ -388,13 +386,6 @@ setup_node() {
 
     append_ssg_profile "$ksfile"
 
-    [[ ! -e "$bootiso" ]] && {
-        echo "$name: Downloading $BOOTISO_URL..."
-        curl -LsSo $bootiso $BOOTISO_URL || die "Failed downloading boot.iso"
-    } || {
-        echo "$name: Using $bootiso"
-    }
-
     qemu-img create -q -f qcow2 $diskimg 65G || die "Failed creating disk"
 
     echo "$name: Installing $squashfs to $diskimg..."
@@ -406,7 +397,7 @@ setup_node() {
         --memory $MAX_VM_MEM \
         --vcpus $MAX_VM_CPUS \
         --cpu host \
-        --location $bootiso \
+        --location "${CENTOS_INSTALLATION_SOURCE}" \
         --extra-args "inst.ks=file:///node-install.ks console=ttyS0 inst.sshd=1" \
         --initrd-inject $ksfile \
         --check disk_size=off,path_in_use=off \
