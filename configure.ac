@@ -15,7 +15,7 @@ dnl Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
 dnl MA  02110-1301, USA.  A copy of the GNU General Public License is
 dnl also available at http://www.gnu.org/copyleft/gpl.html.
 
-define([VERSION_NUMBER], [4.4.0])
+define([VERSION_NUMBER], [4.4.1])
 define([RELEASEVER], [0.0])
 
 AC_INIT([ovirt-node-ng-image-update], VERSION_NUMBER, [devel@ovirt.org])
@@ -59,9 +59,9 @@ AC_SUBST([TMPDIR])
 
 AC_ARG_WITH([ovirt-release-rpm-url],
     [AS_HELP_STRING([--with-ovirt-release-rpm-url=URL],
-        [URL to the ovirt-release rpm (default: http://resources.ovirt.org/pub/yum-repo/ovirt-release-master.rpm)])],
+        [URL to the ovirt-release rpm (default: http://resources.ovirt.org/pub/yum-repo/ovirt-release44-pre.rpm)])],
     [OVIRTRELEASERPMURL="$withval"],
-    [OVIRTRELEASERPMURL="http://resources.ovirt.org/pub/yum-repo/ovirt-release-master.rpm"])
+    [OVIRTRELEASERPMURL="http://resources.ovirt.org/pub/yum-repo/ovirt-release44-pre.rpm"])
 AC_SUBST([OVIRTRELEASERPMURL])
 
 AC_CONFIG_FILES([
