@@ -86,10 +86,14 @@ get_vm_ip() {
 }
 
 prepare_network() {
-    virsh -q net-info ${LIBVIRT_NETWORK} > /dev/null 2>&1 && return
-
-    tmpf=$(mktemp)
-    cat << EOF >> ${tmpf}
+    hint=$(virsh -q net-info ${LIBVIRT_NETWORK} | grep 'Active' | awk '{print $2}')
+    if [[ $hint == 'yes' ]]; then
+        echo "network ${LIBVIRT_NETWORK} already active"
+        return
+    elif [ -z "$hint" ]; then
+        echo "defining network ${LIBVIRT_NETWORK}"
+        tmpf=$(mktemp)
+        cat << EOF >> ${tmpf}
 <network>
   <name>${LIBVIRT_NETWORK}</name>
   <bridge name="virbr${LIBVIRT_IP_OCTET}" />
@@ -105,7 +109,8 @@ prepare_network() {
   </ip>
 </network>
 EOF
-    virsh -q net-define ${tmpf} > /dev/null
+        virsh -q net-define ${tmpf} > /dev/null
+    fi
     virsh net-start ${LIBVIRT_NETWORK}
     rm -f ${tmpf}
 }
