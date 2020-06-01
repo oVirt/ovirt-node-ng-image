@@ -73,5 +73,8 @@ umount "$MNTDIR"
 %{_node_image_dir}/product.img
 
 %changelog
+* Mon Jun 01 2020 Lev Veyde <lveyde@redhat.com>
+- 4.3.10 GA
+
 * Wed Jul 25 2018 Yuval Turgeman <yturgema@redhat.com>
 - Build from a single main package
