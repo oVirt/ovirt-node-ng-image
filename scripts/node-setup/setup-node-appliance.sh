@@ -86,7 +86,7 @@ get_vm_ip() {
 }
 
 prepare_network() {
-    hint=$(virsh -q net-info ${LIBVIRT_NETWORK} | grep 'Active' | awk '{print $2}')
+    hint=$(virsh -q net-info ${LIBVIRT_NETWORK} 2> /dev/null | grep 'Active' | awk '{print $2}')
     if [[ $hint == 'yes' ]]; then
         echo "network ${LIBVIRT_NETWORK} already active"
         return
