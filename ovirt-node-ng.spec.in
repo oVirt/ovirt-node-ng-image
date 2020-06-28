@@ -42,7 +42,7 @@ make %{?_smp_mflags}
 /usr/bin/install -m 644 %{SOURCE2} %{buildroot}/%{_node_image_dir}/product.img
 
 %pre
-local_sds=($(find / -xdev -name "__DIRECT_IO_TEST__"))
+local_sds=($(find / -xdev -path "dom_md/metadata" -not -empty))
 
 if [ "$local_sds" ]; then
     echo "Local storage domains were found on the same filesystem as / ! Please migrate the data to a new LV before upgrading, or you will lose the VMs"
