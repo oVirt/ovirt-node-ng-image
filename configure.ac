@@ -27,7 +27,7 @@ AC_SUBST([PACKAGE_RPM_VERSION])
 PACKAGE_RPM_RELEASE="0.$(date +%Y%m%d).0"
 AC_SUBST([PACKAGE_RPM_RELEASE])
 
-FINALBUILD=False
+FINALBUILD=True
 AC_SUBST([FINALBUILD])
 
 IMAGENAME="ovirt-node-ng-image"
@@ -62,9 +62,9 @@ AC_SUBST([TMPDIR])
 
 AC_ARG_WITH([ovirt-release-rpm-url],
     [AS_HELP_STRING([--with-ovirt-release-rpm-url=URL],
-        [URL to the ovirt-release rpm (default: http://resources.ovirt.org/pub/yum-repo/ovirt-release44-pre.rpm)])],
+        [URL to the ovirt-release rpm (default: http://resources.ovirt.org/pub/yum-repo/ovirt-release44.rpm)])],
     [OVIRTRELEASERPMURL="$withval"],
-    [OVIRTRELEASERPMURL="http://resources.ovirt.org/pub/yum-repo/ovirt-release44-pre.rpm"])
+    [OVIRTRELEASERPMURL="http://resources.ovirt.org/pub/yum-repo/ovirt-release44.rpm"])
 AC_SUBST([OVIRTRELEASERPMURL])
 
 AC_CONFIG_FILES([

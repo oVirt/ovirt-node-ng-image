@@ -73,6 +73,9 @@ umount "$MNTDIR"
 %{_node_image_dir}/product.img
 
 %changelog
+* Wed Jul 08 2020 Lev Veyde <lveyde@redhat.com> - 4.4.1
+- 4.4.1 GA build
+
 * Mon May 18 2020 Lev Veyde <lveyde@redhat.com> - 4.4.0
 - 4.4.0 GA build
 
