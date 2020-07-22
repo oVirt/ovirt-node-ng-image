@@ -67,10 +67,12 @@ LMC ?= livemedia-creator
 %.squashfs.img: data/%.ks @BOOTISO@
 	$(LMC) $(LMCOPTS) --vcpus=$(LMC_CPUS) --ram=$(LMC_MEM) --kernel-args="ipv6.disable=1" --make-pxe-live --iso @BOOTISO@ --ks $< --resultdir build --tmp @TMPDIR@
 	mv -v build/*squash* "$@"
+	ls -l *squash*
+	file *squash*
 
 # Short TMPDIR otherwise we run into trouble with guestfish < 1.33.27-1.fc24
 # # -x -v to be more verbose
-IN_ROOTFS=LIBGUESTFS_TMPDIR=/var/tmp guestfish --ro -a $(SQUASHFSFILENAME) run : mount /dev/sda / : mount-loop /LiveOS/rootfs.img / : sh
+IN_ROOTFS=LIBGUESTFS_TMPDIR=/var/tmp guestfish -x -v --ro -a $(SQUASHFSFILENAME) run : mount /dev/sda / : mount-loop /LiveOS/rootfs.img / : sh
 $(RPMMANIFESTNAME): $(SQUASHFSFILENAME)
 	$(IN_ROOTFS) "rpm -qa|sort" > $@
 

@@ -14,7 +14,7 @@ TMPDIR=$(realpath bootiso.d)
 
 die() { echo "ERROR: $@" >&2 ; exit 2 ; }
 cond_out() { "$@" > .tmp.log 2>&1 || { cat .tmp.log >&2 ; die "Failed to run $@" ; } && rm .tmp.log || : ; return $? ; }
-in_squashfs() { TMPDIR=/var/tmp guestfish --ro -a ${SQUASHFS} run : mount /dev/sda / : mount-loop /LiveOS/rootfs.img / : sh "$1" ; }
+in_squashfs() { LIBGUESTFS_DEBUG=1 LIBGUESTFS_TRACE=1 TMPDIR=/var/tmp guestfish --ro -a ${SQUASHFS} run : mount /dev/sda / : mount-loop /LiveOS/rootfs.img / : sh "$1" ; }
 
 extract_iso() {
   echo "[1/4] Extracting ISO"
