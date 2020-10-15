@@ -42,7 +42,14 @@ make %{?_smp_mflags}
 /usr/bin/install -m 644 %{SOURCE2} %{buildroot}/%{_node_image_dir}/product.img
 
 %pre
-local_sds=($(find / -xdev -path "*/dom_md/metadata" -not -empty))
+# Veriying avoiding installing over an active local storage,
+# we use the following 'find' options:
+#   -xdev, Don't descend directories on other filesystems, those are not considered local storages,
+#          and are not affected by the installation
+#   -not -empty, Skip empty metadata files as storage domains cannot have empty metadata file.
+# we also exclude folders starting with /rhvh which holds symbolic links to block storage domains
+# Or mounted file based storage domains, although these are likely skipped by -xdev.
+local_sds=($(find / -xdev -path "*/dom_md/metadata" -not -empty | egrep -v ^/rhev/))
 
 if [ "$local_sds" ]; then
     echo "Local storage domains were found on the same filesystem as / ! Please migrate the data to a new LV before upgrading, or you will lose the VMs"
