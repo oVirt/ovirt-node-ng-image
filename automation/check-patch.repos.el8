@@ -1,0 +1,3 @@
+# Provides Lorax rebuilt from CentOS Stream
+ovirt-44-testing,https://buildlogs.centos.org/centos/8/virt/x86_64/ovirt-44/
+
