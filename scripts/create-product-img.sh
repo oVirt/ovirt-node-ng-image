@@ -23,10 +23,10 @@ SSGDIR=$PRDDIR/usr/share/xml/scap/ssg/content
 mkdir -p "$PRDDIR" "$PIXMAPDIR" "$KSDIR"
 cp "$SRCDIR"/sidebar-logo.png "$PIXMAPDIR/"
 
-if [[ -n $SHIP_OVIRT_INSTALLCLASS ]]; then
-    inst_class_dir=$PRDDIR/run/install/product/pyanaconda/installclasses
-    mkdir -p $inst_class_dir
-    cp $DATADIR/ovirt.py $inst_class_dir
+if [[ -n $SHIP_OVIRT_CONF ]]; then
+    product_conf_dir=$PRDDIR/etc/anaconda/product.d
+    mkdir -p $product_conf_dir
+    cp $DATADIR/ovirt.conf $product_conf_dir
 fi
 
 if [[ -n $SSG_TARGET_XML ]]; then

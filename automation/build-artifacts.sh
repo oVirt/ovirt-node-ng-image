@@ -54,7 +54,7 @@ build() {
             ;;
         el8)
             prepare_osinfo_db
-            export SHIP_OVIRT_INSTALLCLASS=1
+            export SHIP_OVIRT_CONF=1
             ./autogen.sh \
                 --with-distro=centos8 \
                 --with-bootisourl=http://mirror.centos.org/centos/8/BaseOS/x86_64/os/images/boot.iso
