@@ -47,7 +47,7 @@ mkdir -p /etc/yum.repos.d
 yum install -y --nogpgcheck {{ releaserpm }}
 yum -y --nogpgcheck --nodocs --setopt=install_weak_deps=False update
 
-yum config-manager --set-enabled PowerTools || true
+yum config-manager --set-enabled powertools || true
 
 # Adds the latest cockpit bits
 yum install --nogpgcheck --nodocs --setopt=install_weak_deps=False -y cockpit
