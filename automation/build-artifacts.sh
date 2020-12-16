@@ -123,7 +123,7 @@ fetch_remote() {
 }
 
 check_iso() {
-    ISO_INSTALL_TIMEOUT=40 ./scripts/node-setup/setup-node-appliance.sh \
+    LOGDIR="${ARTIFACTSDIR}" ISO_INSTALL_TIMEOUT=40 ./scripts/node-setup/setup-node-appliance.sh \
         -i ovirt-node*.iso \
         -p ovirt > setup-iso.log 2>&1 || setup_rc=$?
 
