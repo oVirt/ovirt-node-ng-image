@@ -2,7 +2,9 @@
 stage:
   - check-merged
   - build-artifacts
-  - check-patch
+  - check-patch:
+      runtime-requirements:
+        support-nesting-level: 2
 distro: el8
 release_branches:
   master: ovirt-master
