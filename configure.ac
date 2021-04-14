@@ -34,16 +34,16 @@ IMAGENAME="ovirt-node-ng-image"
 AC_SUBST([IMAGENAME])
 
 AC_ARG_WITH([distro],
-    [AS_HELP_STRING([--with-distro=distro], [Base node-ng on distro (default: centos)])],
+    [AS_HELP_STRING([--with-distro=distro], [Base node-ng on distro (default: centos8stream)])],
     [DISTRO="$withval"],
-    [DISTRO="centos8"])
+    [DISTRO="centos8stream"])
 AC_SUBST([DISTRO])
 
 AC_ARG_WITH([bootisourl],
     [AS_HELP_STRING([--with-bootisourl=URL],
-        [boot ISO url (default: http://mirror.centos.org/centos/8/BaseOS/x86_64/os/images/boot.iso)])],
+        [boot ISO url (default: http://mirror.centos.org/centos/8-stream/BaseOS/x86_64/os/images/boot.iso)])],
     [BOOTISOURL="$withval"],
-    [BOOTISOURL="http://mirror.centos.org/centos/8/BaseOS/x86_64/os/images/boot.iso"])
+    [BOOTISOURL="http://mirror.centos.org/centos/8-stream/BaseOS/x86_64/os/images/boot.iso"])
 AC_SUBST([BOOTISOURL])
 
 AC_ARG_WITH([bootiso],

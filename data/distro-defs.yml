@@ -1,10 +1,17 @@
 ---
-centos8:
-  url: --mirrorlist=http://mirrorlist.centos.org/?repo=BaseOS&release=8&arch=$basearch
+centos8stream:
+  url: --mirrorlist=http://mirrorlist.centos.org/?repo=BaseOS&release=8-stream&arch=$basearch
   repos:
-    appstream: --mirrorlist=http://mirrorlist.centos.org/?repo=AppStream&release=8&arch=$basearch
-    powertools: --mirrorlist=http://mirrorlist.centos.org/?repo=PowerTools&release=8&arch=$basearch
-    extras: --mirrorlist=http://mirrorlist.centos.org/?repo=Extras&release=8&arch=$basearch
+    appstream: --mirrorlist=http://mirrorlist.centos.org/?repo=AppStream&release=8-stream&arch=$basearch
+    powertools: --mirrorlist=http://mirrorlist.centos.org/?repo=PowerTools&release=8-stream&arch=$basearch
+    extras: --mirrorlist=http://mirrorlist.centos.org/?repo=Extras&release=8-stream&arch=$basearch
   packages-switch: --excludeWeakdeps
   packages:
     - dracut-live
+    - python36
+    - centos-stream-repos
+  post:
+    - |
+        ver=$(rpm -qf /etc/yum.repos.d/ovirt* | sort -u | sed 's/ovirt-release//' | cut -b1)
+        [[ $ver = "-" ]] && ver="m"
+        ln -sf /usr/share/xml/scap/ssg/content/{ssg-rhel8,ssg-onn$ver}-ds.xml

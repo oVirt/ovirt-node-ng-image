@@ -15,7 +15,7 @@ LIBVIRT_NETWORK="ovirt-node-net"
 LIBVIRT_IP_OCTET="155"
 
 CENTOS_MIRROR="${CENTOS_MIRROR:-http://mirror.centos.org}"
-CENTOS_INSTALLATION_SOURCE="${CENTOS_MIRROR}/centos/8/BaseOS/x86_64/os/"
+CENTOS_INSTALLATION_SOURCE="${CENTOS_MIRROR}/centos/8-stream/BaseOS/x86_64/os/"
 RELEASE_RPM=
 
 ####################
