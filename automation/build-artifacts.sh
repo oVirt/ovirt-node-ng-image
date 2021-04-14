@@ -41,23 +41,11 @@ build() {
     dist=${dist##.}
 
     case ${dist} in
-        fc*)
-            fcrel="${dist##fc}"
-            export SHIP_OVIRT_INSTALLCLASS=1
-            ./autogen.sh \
-                --with-distro=fedora \
-                --with-bootisourl=http://download.fedoraproject.org/pub/fedora/linux/releases/${fcrel}/Server/x86_64/os/images/boot.iso
-            ;;
-        el7)
-            export SSG_TARGET_XML=/usr/share/xml/scap/ssg/content/ssg-centos7-ds.xml
-            ./autogen.sh
-            ;;
         el8)
             prepare_osinfo_db
+            export SSG_TARGET_XML=/usr/share/xml/scap/ssg/content/ssg-rhel8-ds.xml
             export SHIP_OVIRT_CONF=1
-            ./autogen.sh \
-                --with-distro=centos8 \
-                --with-bootisourl=http://mirror.centos.org/centos/8/BaseOS/x86_64/os/images/boot.iso
+            ./autogen.sh
             ;;
     esac
 

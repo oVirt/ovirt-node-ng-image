@@ -42,6 +42,9 @@ dracut-config-generic
 set -x
 mkdir -p /etc/yum.repos.d
 
+# For build issues debugging purpose, looking for known repositories
+dnf repolist
+
 # Adding upstream oVirt vdsm
 # 1. Install oVirt release file with repositories
 yum install -y --nogpgcheck {{ releaserpm }}
