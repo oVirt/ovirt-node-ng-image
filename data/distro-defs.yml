@@ -10,6 +10,7 @@ centos8stream:
     - dracut-live
     - python36
     - centos-stream-repos
+    - scap-security-guide  # needed for post action
   post:
     - |
         ver=$(rpm -qf /etc/yum.repos.d/ovirt* | sort -u | sed 's/ovirt-release//' | cut -b1)
