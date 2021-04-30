@@ -176,6 +176,24 @@ run_nodectl_check() {
     echo "$check" > $name-nodectl-check.log
 }
 
+run_node_ansible_check() {
+    local name=$1
+    local ssh_key=$2
+    local ip=$3
+    local timeout=120
+    local check=""
+
+    while [[ -z "$check" ]]
+    do
+        [[ $timeout -eq 0 ]] && break
+        check=$(do_ssh "$ssh_key" "$ip" "ansible -m setup localhost | grep dist")
+        sleep 10
+        timeout=$((timeout - 10))
+    done
+
+    echo "$check" > "$name-node-ansible-check.log"
+}
+
 prepare_appliance() {
     local name=$1
     local url=$2
@@ -353,6 +371,7 @@ EOF
         local ip=$(get_vm_ip $name)
 
         run_nodectl_check $name $ssh_key $ip
+        run_node_ansible_check $name $ssh_key $ip
         run_network_check $name $vmpasswd
 
         echo "$name: node is available at $ip"
@@ -421,6 +440,7 @@ setup_node() {
         local ip=$(get_vm_ip $name)
 
         run_nodectl_check $name $ssh_key $ip
+        run_node_ansible_check $name $ssh_key $ip
         run_network_check $name $vmpasswd
 
         echo "$name: node is available at $ip"

@@ -133,8 +133,9 @@ check_iso() {
 
     status1=$(grep -Po "(?<=Status: ).*" *nodectl-check*.log)
     status2=$(grep Status network-check.log |cut -d' ' -f2)
+    status3=$(test $(grep ansible_distribution_major_version *node-ansible-check.log |cut -d\" -f4) -eq "8" && echo "OK")
 
-    [[ "$status1" == *OK* || "$status2" == *OK* ]] || {
+    [[ "$status1" == *OK* && "$status2" == *OK* && "$status3" == *OK* ]] || {
         echo "Invalid node status"
         exit 1
     }
