@@ -13,6 +13,6 @@ centos8stream:
     - scap-security-guide  # needed for post action
   post:
     - |
-        ver=$(rpm -qf /etc/yum.repos.d/ovirt* | sort -u | sed 's/ovirt-release//' | cut -b1)
+        ver=$(rpm -qf /etc/yum.repos.d/ovirt* | grep ^ovirt-release | sort -u | sed 's/ovirt-release//' | cut -b1)
         [[ $ver = "-" ]] && ver="m"
         ln -sf /usr/share/xml/scap/ssg/content/{ssg-rhel8,ssg-onn$ver}-ds.xml
