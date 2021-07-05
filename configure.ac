@@ -15,8 +15,8 @@ dnl Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
 dnl MA  02110-1301, USA.  A copy of the GNU General Public License is
 dnl also available at http://www.gnu.org/copyleft/gpl.html.
 
-define([VERSION_NUMBER], [4.4.7])
-define([RELEASEVER], [1])
+define([VERSION_NUMBER], [4.4.8])
+define([RELEASEVER], [0.0])
 
 AC_INIT([ovirt-node-ng-image-update], VERSION_NUMBER, [devel@ovirt.org])
 AM_INIT_AUTOMAKE([-Wall -Werror foreign -Wno-portability tar-pax no-dependencies])
@@ -24,10 +24,10 @@ AM_INIT_AUTOMAKE([-Wall -Werror foreign -Wno-portability tar-pax no-dependencies
 PACKAGE_RPM_VERSION="VERSION_NUMBER"
 AC_SUBST([PACKAGE_RPM_VERSION])
 
-PACKAGE_RPM_RELEASE="1.$(date +%Y%m%d).0"
+PACKAGE_RPM_RELEASE="0.$(date +%Y%m%d).0"
 AC_SUBST([PACKAGE_RPM_RELEASE])
 
-FINALBUILD=True
+FINALBUILD=False
 AC_SUBST([FINALBUILD])
 
 IMAGENAME="ovirt-node-ng-image"
@@ -62,9 +62,9 @@ AC_SUBST([TMPDIR])
 
 AC_ARG_WITH([ovirt-release-rpm-url],
     [AS_HELP_STRING([--with-ovirt-release-rpm-url=URL],
-        [URL to the ovirt-release rpm (default: http://resources.ovirt.org/pub/yum-repo/ovirt-release44.rpm)])],
+        [URL to the ovirt-release rpm (default: http://resources.ovirt.org/pub/yum-repo/ovirt-release44-pre.rpm)])],
     [OVIRTRELEASERPMURL="$withval"],
-    [OVIRTRELEASERPMURL="http://resources.ovirt.org/pub/yum-repo/ovirt-release44.rpm"])
+    [OVIRTRELEASERPMURL="http://resources.ovirt.org/pub/yum-repo/ovirt-release44-pre.rpm"])
 AC_SUBST([OVIRTRELEASERPMURL])
 
 AC_CONFIG_FILES([
