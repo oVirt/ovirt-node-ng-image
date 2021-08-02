@@ -48,11 +48,6 @@ dnf repolist
 # Adding upstream oVirt vdsm
 # 1. Install oVirt release file with repositories
 yum install -y --nogpgcheck {{ releaserpm }}
-
-# Temporary solution for CentOS 8 Stream issue
-yum install -y --nogpgcheck python3-dnf-plugin-versionlock
-dnf versionlock exclude qemu-kvm-6.0.0 qemu-guest-agent-6.0.0
-
 yum -y --nogpgcheck --nodocs --setopt=install_weak_deps=False update
 
 yum config-manager --set-enabled powertools || true
