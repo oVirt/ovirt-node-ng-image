@@ -80,32 +80,5 @@ umount "$MNTDIR"
 %{_node_image_dir}/product.img
 
 %changelog
-* Mon Jul 05 2021 Sandro Bonazzola <sbonazzo@redhat.com> - 4.4.7
-- 4.4.7 GA build
-
-* Tue May 04 2021 Sandro Bonazzola <sbonazzo@redhat.com> - 4.4.6
-- 4.4.6 GA build
-
-* Wed Mar 17 2021 Lev Veyde <lveyde@redhat.com> - 4.4.5
-- 4.4.5 GA build
-
-* Mon Dec 21 2020 Sandro Bonazzola <sbonazzo@redhat.com> - 4.4.4
-- 4.4.4 GA build
-
-* Tue Nov 10 2020 Sandro Bonazzola <sbonazzo@redhat.com> - 4.4.3
-- 4.4.3 GA build
-
-* Wed Sep 16 2020 Lev Veyde <lveyde@redhat.com> - 4.4.2
-- 4.4.2 GA build
-
-* Wed Jul 22 2020 Lev Veyde <lveyde@redhat.com> - 4.4.1.3
-- 4.4.1.3 GA build
-
-* Wed Jul 08 2020 Lev Veyde <lveyde@redhat.com> - 4.4.1
-- 4.4.1 GA build
-
-* Mon May 18 2020 Lev Veyde <lveyde@redhat.com> - 4.4.0
-- 4.4.0 GA build
-
-* Wed Jul 25 2018 Yuval Turgeman <yturgema@redhat.com>
-- Build from a single main package
+* Tue Sep 07 2021 Sandro Bonazzola <sbonazzo@redhat.com> - 4.5.0
+- oVirt Node 4.5.0
