@@ -5,6 +5,10 @@ stage:
   - check-patch:
       runtime-requirements:
         support-nesting-level: 2
-distro: el8
+distro:
+  - el8
+  - el9stream:
+      runtime-requirements:
+        host_distro: newer
 release_branches:
   master: ovirt-master

@@ -4,6 +4,7 @@ expect
 kernel-modules
 libguestfs-tools
 libosinfo
+libvirt-client
 lorax
 make
 openssh

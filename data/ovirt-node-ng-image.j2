@@ -48,9 +48,15 @@ dnf repolist
 # Adding upstream oVirt vdsm
 # 1. Install oVirt release file with repositories
 yum install -y --nogpgcheck {{ releaserpm }}
+
+
+{%- for addrepo in data["needed_repos"] %}
+{{ addrepo }}
+{%- endfor %}
+
 yum -y --nogpgcheck --nodocs --setopt=install_weak_deps=False update
 
-yum config-manager --set-enabled powertools || true
+
 
 # Adds the latest cockpit bits
 yum install --nogpgcheck --nodocs --setopt=install_weak_deps=False -y cockpit

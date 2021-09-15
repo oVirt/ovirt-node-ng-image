@@ -47,6 +47,14 @@ build() {
             export SHIP_OVIRT_CONF=1
             ./autogen.sh
             ;;
+        el9)
+            prepare_osinfo_db
+            export SSG_TARGET_XML=/usr/share/xml/scap/ssg/content/ssg-rhel9-ds.xml
+            export SHIP_OVIRT_CONF=1
+            ./autogen.sh \
+                --with-distro=c9s \
+                --with-bootisourl=https://composes.stream.centos.org/production/CentOS-Stream-9-20210915.0/compose/BaseOS/x86_64/iso/CentOS-Stream-9-20210915.0-x86_64-boot.iso
+            ;;
     esac
 
     make squashfs &
