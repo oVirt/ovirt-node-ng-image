@@ -9,8 +9,8 @@ make
 openssh
 openssh-clients
 pigz
-python2-jinja2
-python2-pyyaml
+python3-jinja2
+python3-pyyaml
 rpm-build
 squashfs-tools
 virt-install
