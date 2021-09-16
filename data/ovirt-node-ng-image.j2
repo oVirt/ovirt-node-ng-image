@@ -54,7 +54,7 @@ yum install -y --nogpgcheck {{ releaserpm }}
 {{ addrepo }}
 {%- endfor %}
 
-yum -y --nogpgcheck --nodocs --setopt=install_weak_deps=False update
+yum -y --nogpgcheck --nodocs --setopt=install_weak_deps=False distro-sync
 
 
 
