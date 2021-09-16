@@ -181,7 +181,10 @@ EOF
 
 prepare
 build
+if [[ "$(rpm --eval "%dist")" != ".el9" ]]; then
+# el9 support is broken due to https://bugzilla.redhat.com/show_bug.cgi?id=2005043
 [[ $STD_CI_STAGE = "check-patch" ]] && check_iso
+fi
 [[ $STD_CI_STAGE = "build-artifacts" ]] && checksum
 
 echo "Done."
