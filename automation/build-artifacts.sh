@@ -74,18 +74,28 @@ build() {
         mksquashfs squashfs-root ovirt-node-ng-image.squashfs.img -noappend -comp xz
     }
 
+    ln -fv \
+        *manifest* \
+        *unsigned* \
+        ovirt-node*.squashfs.img \
+        "$ARTIFACTSDIR/"
+
+
     make product.img rpm
+
+    ln -fv \
+        tmp.repos/SRPMS/*.rpm \
+        tmp.repos/RPMS/noarch/*.rpm \
+        product.img \
+        "$ARTIFACTSDIR/"
+
+
     make offline-installation-iso
     mv -fv ovirt-node-ng-image.squashfs.img \
            ovirt-node-ng-image-$(date +%Y%m%d).squashfs.img
 
     ln -fv \
-        *manifest* \
-        *unsigned* \
-        tmp.repos/SRPMS/*.rpm \
-        tmp.repos/RPMS/noarch/*.rpm \
         ovirt-node*.squashfs.img \
-        product.img \
         ovirt-node*.iso \
         "$ARTIFACTSDIR/"
 }
