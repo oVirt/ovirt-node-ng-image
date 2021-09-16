@@ -1,6 +1,7 @@
 autoconf
 automake
 expect
+genisoimage
 kernel-modules
 libguestfs-tools
 libosinfo

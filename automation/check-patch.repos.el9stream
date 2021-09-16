@@ -1,0 +1,3 @@
+# Provides genisoimage
+# TODO: replace genisoimage with xorriso or alternative tool
+el9collection,https://download.copr.fedorainfracloud.org/results/sbonazzo/EL9Collection/centos-stream-9-$basearch/
