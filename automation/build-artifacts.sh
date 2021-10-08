@@ -101,6 +101,8 @@ build() {
 }
 
 cleanup() {
+    # Kill qemu-kvm in case it has been left around.
+    killall qemu-kvm ||:
     # Remove device-mapper files that were created by kpartx in LMC
     dmsetup ls | \
         grep ^loop | \
