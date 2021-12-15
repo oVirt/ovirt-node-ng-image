@@ -50,8 +50,16 @@ dnf repolist
 yum install -y --nogpgcheck {{ releaserpm }}
 
 # Temporary solution for CentOS 8 Stream issue
-yum install -y --nogpgcheck python3-dnf-plugin-versionlock
+dnf install -y --nogpgcheck python3-dnf-plugin-versionlock
 dnf versionlock exclude qemu-kvm-6.1.0
+
+# https://bugzilla.redhat.com/show_bug.cgi?id=2026370
+dnf versionlock exclude device-mapper-1.02.181
+dnf versionlock exclude device-mapper-event-1.02.181
+dnf versionlock exclude device-mapper-event-libs-1.02.181
+dnf versionlock exclude device-mapper-libs-1.02.181
+dnf versionlock exclude lvm2-2.03.14
+dnf versionlock exclude lvm2-libs-2.03.14
 
 yum -y --nogpgcheck --nodocs --setopt=install_weak_deps=False update
 
