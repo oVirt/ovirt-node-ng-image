@@ -161,8 +161,23 @@ EOF
     popd
 }
 
+verify() {
+    pkgs_in_manifest=$(wc -l "${ARTIFACTSDIR}/ovirt-node-ng-image.manifest-rpm" | cut -d ' ' -f1)
+    echo "Manifest contains ${pkgs_in_manifest} packages"
+    while read -r pkg; do
+        if [[ -n ${pkg} ]]; then
+            echo "Checking for required package: ${pkg}"
+            if ! grep -Eq "${pkg}" "${ARTIFACTSDIR}/ovirt-node-ng-image.manifest-rpm"; then
+                echo "Not found!"
+                exit 1
+            fi
+        fi
+    done < automation/packages.required
+}
+
 prepare
 build
+verify
 [[ $STD_CI_STAGE = "check-patch" ]] && check_iso
 [[ $STD_CI_STAGE = "build-artifacts" ]] && checksum
 
