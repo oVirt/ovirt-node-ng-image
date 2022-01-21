@@ -4,15 +4,10 @@
 #              NOT FOR INSTALLATION
 #
 
-url {{ data["url"] }}
-
-{%- for r_name, r_url in data["repos"].items() %}
-repo --name={{ r_name }} {{ r_url }}
-{%- endfor %}
-
-{%- if data["updates"] %}
-updates {{ data["updates"] }}
-{%- endif %}
+url --mirrorlist=http://mirrorlist.centos.org/?repo=BaseOS&release=8-stream&arch=$basearch
+repo --name=appstream --mirrorlist=http://mirrorlist.centos.org/?repo=AppStream&release=8-stream&arch=$basearch
+repo --name=powertools --mirrorlist=http://mirrorlist.centos.org/?repo=PowerTools&release=8-stream&arch=$basearch
+repo --name=extras --mirrorlist=http://mirrorlist.centos.org/?repo=Extras&release=8-stream&arch=$basearch
 
 
 lang en_US.UTF-8
@@ -29,12 +24,13 @@ part / --size=5120 --fstype=ext4 --fsoptions=discard
 poweroff
 
 
-%packages --excludedocs --ignoremissing {{ data["packages-switch"] }}
+%packages --excludedocs --ignoremissing --excludeWeakdeps
 dracut-config-generic
 -dracut-config-rescue
-{%- for pkg in data["packages"] %}
-{{ pkg }}
-{%- endfor %}
+dracut-live
+python36
+centos-stream-repos
+scap-security-guide
 %end
 
 
@@ -47,10 +43,9 @@ dnf repolist
 
 # Adding upstream oVirt vdsm
 # 1. Install oVirt release file with repositories
+yum install -y --nogpgcheck http://resources.ovirt.org/pub/yum-repo/ovirt-release-master-tested.rpm
+yum config-manager --set-enabled powertools || true
 
-{%- for addrepo in data["needed_repos"] %}
-{{ addrepo }}
-{%- endfor %}
 
 yum -y --nogpgcheck --nodocs --setopt=install_weak_deps=False distro-sync
 
@@ -83,10 +78,9 @@ imgbase --debug --experimental \
   --postprocess \
   --set-nvr=$(rpm -q --qf "ovirt-node-ng-%{version}-0.$(date +%Y%m%d).0" ovirt-release-host-node)
 %end
-
-
-{%- for post in data["post"] %}
 %post
-{{ post }}
+ver=$(rpm -qf /etc/yum.repos.d/ovirt* | grep ^ovirt-release | sort -u | sed 's/ovirt-release//' | cut -b1)
+[[ $ver = "-" ]] && ver="m"
+ln -sf /usr/share/xml/scap/ssg/content/{ssg-rhel8,ssg-onn$ver}-ds.xml
+
 %end
-{%- endfor %}

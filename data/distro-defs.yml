@@ -7,6 +7,8 @@ centos8stream:
     extras: --mirrorlist=http://mirrorlist.centos.org/?repo=Extras&release=8-stream&arch=$basearch
   needed_repos:
     - |
+        rpm --import https://download.copr.fedorainfracloud.org/results/ovirt/ovirt-master-snapshot/pubkey.gpg
+        dnf --repofrompath=ovirt-master-snapshot,https://download.copr.fedorainfracloud.org/results/ovirt/ovirt-master-snapshot/{{ data["copr-repo"] }}/ install -y ovirt-release-master
         dnf config-manager --set-enabled powertools || true
   packages-switch: --excludeWeakdeps
   copr-repo: centos-stream-8-x86_64
@@ -27,7 +29,30 @@ c9s:
     crb: --metalink=https://mirrors.centos.org/metalink?repo=centos-crb-$stream&arch=$basearch
   needed_repos:
     - |
+        rpm --import https://download.copr.fedorainfracloud.org/results/ovirt/ovirt-master-snapshot/pubkey.gpg
+        dnf --repofrompath=ovirt-master-snapshot,https://download.copr.fedorainfracloud.org/results/ovirt/ovirt-master-snapshot/{{ data["copr-repo"] }}/ install -y ovirt-release-master
         dnf config-manager --set-enabled crb || true
+        dnf config-manager --set-enabled resilientstorage || true
+  packages-switch: --excludeWeakdeps
+  copr-repo: centos-stream-9-x86_64
+  packages:
+    - dracut-live
+    - centos-stream-repos
+    - scap-security-guide  # needed for post action
+  post:
+    - |
+        ver=$(rpm -qf /etc/yum.repos.d/ovirt* | grep ^ovirt-release | sort -u | sed 's/ovirt-release//' | cut -b1)
+        [[ $ver = "-" ]] && ver="m"
+        ln -sf /usr/share/xml/scap/ssg/content/{ssg-rhel9,ssg-onn$ver}-ds.xml
+
+cbs9s:
+  repos: {}
+  url: --url=http://mirror.stream.centos.org/9-stream/BaseOS/x86_64/os/
+  needed_repos:
+    - |
+        dnf install -y centos-release-ovirt45
+        dnf config-manager --set-enabled crb || true
+        dnf config-manager --set-enabled resilientstorage || true
   packages-switch: --excludeWeakdeps
   copr-repo: centos-stream-9-x86_64
   packages:
