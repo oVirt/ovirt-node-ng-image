@@ -1,0 +1,22 @@
+[image-build]
+name: ovirt-node-ng-image
+version: @VERSION@
+release: @RELEASE@
+scratch: True
+target: virt8s-ovirt-45-el8s
+install_tree: http://mirror.centos.org/centos/8-stream/BaseOS/x86_64/os/
+arches: x86_64
+# Note:
+# - distro refers to the plugin name within oz, it's passed as command parameter to "cbs image-build"
+distro: Fedora-29
+# - ksversion refer to pykickstart handler
+# Within CBS RHEL 9 is not supported and so F29 and later.
+# Going with F28 head to having anaconda requinring inst prefix to all commands within the kickstart.
+# Trying again without  metalink which is unsupported in F24
+ksversion: F24
+kickstart: ovirt-node-ng-image.ks
+specfile: ovirt-node-ng.spec
+format: liveimg-squashfs
+disk_size: 10
+# assuming things built within CBS will be available
+repo: http://mirror.centos.org/centos/8-stream/BaseOS/x86_64/os/,http://mirror.centos.org/centos/8-stream/AppStream/x86_64/os/,http://mirror.centos.org/centos/8-stream/extras/x86_64/os/,http://mirror.centos.org/centos/8-stream/virt/x86_64/ovirt-45/,https://buildlogs.centos.org/centos/8-stream/virt/x86_64/ovirt-45/,http://mirror.centos.org/centos/8-stream/storage/x86_64/gluster-10/,https://buildlogs.centos.org/centos/8-stream/cloud/x86_64/openstack-yoga/,http://mirror.centos.org/centos/8-stream/cloud/x86_64/openstack-xena/,http://mirror.centos.org/centos/8-stream/opstools/x86_64/collectd-5/,http://mirror.centos.org/centos/8-stream/storage/x86_64/ceph-pacific/,http://mirror.centos.org/centos/8-stream/nfv/x86_64/openvswitch-2/,http://mirror.centos.org/centos/8-stream/PowerTools/x86_64/os/,https://buildlogs.centos.org/centos/8-stream/extras/x86_64/extras-common/

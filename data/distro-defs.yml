@@ -22,6 +22,30 @@ centos8stream:
         ver=$(rpm -qf /etc/yum.repos.d/ovirt* | grep ^ovirt-release | sort -u | sed 's/ovirt-release//' | cut -b1)
         [[ $ver = "-" ]] && ver="m"
         ln -sf /usr/share/xml/scap/ssg/content/{ssg-rhel8,ssg-onn$ver}-ds.xml
+
+cbs8s:
+  url: --url=http://mirror.centos.org/centos/8-stream/BaseOS/x86_64/os/
+  repos: {}
+  needed_repos:
+    - |
+        dnf config-manager --set-enabled powertools || true
+  packages-switch: --excludeWeakdeps
+  packages:
+    - dracut-live
+    - python36
+    - centos-stream-repos
+    - scap-security-guide  # needed for post action
+    - centos-release-ovirt45 # needed to get additional repos
+    - cockpit
+    - ovirt-release-host-node
+    - ovirt-node-ng-image-update-placeholder
+    - -ovirt-node-ng-image-update
+  post:
+    - |
+        ver=$(rpm -qf /etc/yum.repos.d/ovirt* | grep ^ovirt-release | sort -u | sed 's/ovirt-release//' | cut -b1)
+        [[ $ver = "-" ]] && ver="m"
+        ln -sf /usr/share/xml/scap/ssg/content/{ssg-rhel8,ssg-onn$ver}-ds.xml
+
 c9s:
   url: --metalink=https://mirrors.centos.org/metalink?repo=centos-baseos-$stream&arch=$basearch
   repos:
