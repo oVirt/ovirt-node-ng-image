@@ -60,13 +60,6 @@ AC_ARG_WITH([tmpdir],
     [TMPDIR="/var/tmp"])
 AC_SUBST([TMPDIR])
 
-AC_ARG_WITH([ovirt-release-rpm-url],
-    [AS_HELP_STRING([--with-ovirt-release-rpm-url=URL],
-        [URL to the ovirt-release rpm (default: http://resources.ovirt.org/pub/yum-repo/ovirt-release-master-tested.rpm)])],
-    [OVIRTRELEASERPMURL="$withval"],
-    [OVIRTRELEASERPMURL="http://resources.ovirt.org/pub/yum-repo/ovirt-release-master-tested.rpm"])
-AC_SUBST([OVIRTRELEASERPMURL])
-
 AC_CONFIG_FILES([
 	Makefile
 ])

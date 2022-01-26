@@ -19,7 +19,6 @@ SQUASHFSFILENAME = @IMAGENAME@.squashfs.img
 RPMMANIFESTNAME = @IMAGENAME@.manifest-rpm
 RPMUNSIGNEDNAME = @IMAGENAME@.unsigned-rpms
 
-OVIRTRELEASERPM = @OVIRTRELEASERPMURL@
 DISTRO = @DISTRO@
 LMC_CPUS = 2
 LMC_MEM = 4096
@@ -61,7 +60,7 @@ offline-installation-iso: product.img
 	wget --timeout=120 $(BOOTISOURL)
 
 data/%.ks: data/%.j2
-	scripts/renderks.py $(OVIRTRELEASERPM) $(DISTRO) > "$@"
+	scripts/renderks.py $(DISTRO) > "$@"
 
 LMC ?= livemedia-creator
 %.squashfs.img: data/%.ks @BOOTISO@

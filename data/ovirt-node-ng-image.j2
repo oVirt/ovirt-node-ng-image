@@ -47,7 +47,8 @@ dnf repolist
 
 # Adding upstream oVirt vdsm
 # 1. Install oVirt release file with repositories
-yum install -y --nogpgcheck {{ releaserpm }}
+rpm --import https://download.copr.fedorainfracloud.org/results/ovirt/ovirt-master-snapshot/pubkey.gpg
+dnf --repofrompath=ovirt-master-snapshot,https://download.copr.fedorainfracloud.org/results/ovirt/ovirt-master-snapshot/{{ data["copr-repo"] }}/ install -y ovirt-release-master
 
 
 {%- for addrepo in data["needed_repos"] %}
