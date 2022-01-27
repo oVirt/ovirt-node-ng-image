@@ -57,7 +57,7 @@ offline-installation-iso: product.img
 			   bash scripts/create-nightly-boot-iso.sh
 
 @BOOTISO@:
-	wget --timeout=120 $(BOOTISOURL)
+	curl -O $(BOOTISOURL)
 
 data/%.ks: data/%.j2
 	scripts/renderks.py $(DISTRO) > "$@"
