@@ -12,7 +12,9 @@ jobs:
       kernel_version: ${{ steps.get-kernel.outputs.kernel_version }}
     steps:
     - id: get-kernel
-      run: echo "::set-output name=kernel_version::$(uname -r)"
+      run: >
+        echo "Kernel version $(uname -r)"
+        echo "::set-output name=kernel_version::$(uname -r)"
 
   build-el8:
     runs-on: image-builders
@@ -26,9 +28,12 @@ jobs:
       uses: actions/checkout@v2
 
     - name: Build
-      # env:
-      #   EXTRACT_INSTALL_LOGS: yes
-      run: ./build.sh
+      env:
+        KERNEL_VERSION: ${{ needs.get-kernel.outputs.kernel_version }}
+        EXTRACT_INSTALL_LOGS: yes
+      run: >
+        echo "k: ${KERNEL_VERSION}"
+        ./build.sh
 
     - name: Upload rpm to resources.ovirt.org
       uses: ovirt/ovirt-resources-upload-action@main
