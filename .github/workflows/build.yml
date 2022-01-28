@@ -21,7 +21,7 @@ jobs:
     needs: get-kernel
     container:
       image: quay.io/ovirt/buildcontainer:el8stream
-      options: --privileged --rm -v /lib/modules/${{ needs.get-kernel.outputs.kernel_version }}:/hostmodules
+      options: --privileged --rm -v /lib/modules/${{ needs.get-kernel.outputs.kernel_version }}:/host/modules
 
     steps:
     - name: Checkout

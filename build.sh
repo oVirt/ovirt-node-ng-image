@@ -1,8 +1,8 @@
 #!/bin/bash -xe
 
-# podman run -v /lib/modules/$(uname -r):/hostmodules --privileged quay.io/ovirt/buildcontainer:el8stream
-echo custom modules: ${SUPERMIN_MODULES:=/hostmodules}
-echo custom kernel: ${SUPERMIN_KERNEL:=/hostmodules/vmlinuz}
+# podman run -v /lib/modules/$(uname -r):/host/modules --privileged quay.io/ovirt/buildcontainer:el8stream
+echo custom modules: ${SUPERMIN_MODULES:=/host/modules}
+echo custom kernel: ${SUPERMIN_KERNEL:=/host/modules/vmlinuz}
 echo extract install logs: $EXTRACT_INSTALL_LOGS
 
 export BRANCH=${GERRIT_BRANCH#*/}
