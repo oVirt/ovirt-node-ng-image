@@ -9,17 +9,17 @@ jobs:
   get-kernel:
     runs-on: image-builders
     outputs:
-      output1: ${{ steps.get-kernel.outputs.kernel }}
+      kernel_version: ${{ steps.get-kernel.outputs.kernel_version }}
     steps:
     - id: get-kernel
-      run: echo "::set-output name=kernel::$(uname -r)"
+      run: echo "::set-output name=kernel_version::$(uname -r)"
 
   build-el8:
     runs-on: image-builders
     needs: get-kernel
     container:
       image: quay.io/ovirt/buildcontainer:el8stream
-      options: --privileged --rm -v /lib/modules/${{ needs.get-kernel.outputs.kernel }}:/hostmodules
+      options: --privileged --rm -v /lib/modules/${{ needs.get-kernel.outputs.kernel_version }}:/hostmodules
 
     steps:
     - name: Checkout
