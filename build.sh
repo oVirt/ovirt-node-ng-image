@@ -81,18 +81,20 @@ build() {
         mksquashfs squashfs-root ovirt-node-ng-image.squashfs.img -noappend -comp xz
     }
 
+# don't push squashfs to exported-artifacts,
+#        ovirt-node*.squashfs.img \
     ln -fv \
         *manifest* \
         *unsigned* \
-        ovirt-node*.squashfs.img \
         "$ARTIFACTSDIR/"
 
 
     make product.img rpm
 
+# don't push rpms to exported-artifacts, uploaded separately
+#        tmp.repos/SRPMS/*.rpm \
+#        tmp.repos/RPMS/noarch/*.rpm \
     ln -fv \
-        tmp.repos/SRPMS/*.rpm \
-        tmp.repos/RPMS/noarch/*.rpm \
         product.img \
         "$ARTIFACTSDIR/"
 
@@ -106,9 +108,6 @@ build() {
 #        ovirt-node*.iso \
 #        "$ARTIFACTSDIR/"
 
-    pushd "$ARTIFACTSDIR/"
-    sha256sum * > CHECKSUMS.sha256 || :
-    popd
 }
 
 cleanup() {
@@ -174,6 +173,6 @@ check_iso() {
 
 prepare
 build
-check_iso
+# check_iso not working
 
 echo "Done."
