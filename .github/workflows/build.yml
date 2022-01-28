@@ -29,11 +29,8 @@ jobs:
 
     - name: Build
       env:
-        KERNEL_VERSION: ${{ needs.get-kernel.outputs.kernel_version }}
-        EXTRACT_INSTALL_LOGS: yes
-      run: |
-        echo "k: ${KERNEL_VERSION} ${{ needs.get-kernel.outputs.kernel_version }}"
-        ./build.sh
+        EXTRACT_INSTALL_LOGS:
+      run: ./build.sh
 
     - name: Upload rpm to resources.ovirt.org
       uses: ovirt/ovirt-resources-upload-action@main

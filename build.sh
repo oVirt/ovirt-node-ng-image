@@ -33,6 +33,8 @@ prepare() {
     losetup -O BACK-FILE | grep -v BACK-FILE | grep iso$ | xargs -r umount -dvf ||:
 
     virt-host-validate ||:
+
+    [ -f ${SUPERMIN_MODULES}/kernel/fs/squashfs/squashfs* ] || { echo missing squashfs module in ${SUPERMIN_MODULES}; exit 1; }
 }
 
 prepare_osinfo_db() {
