@@ -98,15 +98,15 @@ build() {
         product.img \
         "$ARTIFACTSDIR/"
 
-# FIXME
+# skip old iso target relying on jenkins and skip the squashfs
 #    make offline-installation-iso
 #    mv -fv ovirt-node-ng-image.squashfs.img \
 #           ovirt-node-ng-image-$(date +%Y%m%d).squashfs.img
 
-#    ln -fv \
-#        ovirt-node*.squashfs.img \
-#        ovirt-node*.iso \
-#        "$ARTIFACTSDIR/"
+    make iso
+    ln -fv \
+        ovirt-node*.iso \
+        "$ARTIFACTSDIR/"
 
 }
 
