@@ -104,9 +104,10 @@ build() {
 #           ovirt-node-ng-image-$(date +%Y%m%d).squashfs.img
 
     make iso
-    ln -fv \
-        ovirt-node*.iso \
-        "$ARTIFACTSDIR/"
+# do not push iso to exported-artifacts, uploaded separately
+#    ln -fv \
+#        ovirt-node*.iso \
+#        "$ARTIFACTSDIR/"
 
 }
 
