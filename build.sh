@@ -3,24 +3,24 @@
 # podman run -v /lib/modules/$(uname -r):/host/modules --privileged quay.io/ovirt/buildcontainer:el8stream
 echo custom modules: ${SUPERMIN_MODULES}
 echo custom kernel: ${SUPERMIN_KERNEL}
-echo extract install logs: $EXTRACT_INSTALL_LOGS
+echo extract install logs: ${EXTRACT_INSTALL_LOGS}
+echo final build: ${FINALBUILD}
 
-export BRANCH=${GERRIT_BRANCH#*/}
-export ARTIFACTSDIR=$PWD/exported-artifacts
+export EXPORTED_ARTIFACTS=${EXPORTED_ARTIFACTS:-$PWD/exported-artifacts}
 
 export LIBGUESTFS_BACKEND=direct
 export LIBGUESTFS_TMPDIR=/var/tmp
 export LIBGUESTFS_CACHEDIR=$LIBGUESTFS_TMPDIR
 
 on_exit() {
-  ln -fv data/ovirt-node*.ks *.log "$ARTIFACTSDIR/"
+  ln -fv data/ovirt-node*.ks *.log "$EXPORTED_ARTIFACTS/"
   cleanup
 }
 
 trap on_exit EXIT
 
 prepare() {
-    mkdir -p "$ARTIFACTSDIR"
+    mkdir -p "$EXPORTED_ARTIFACTS"
 
     mknod /dev/kvm c 10 232 || :
     mknod /dev/vhost-net c 10 238 || :
@@ -70,12 +70,12 @@ build() {
     # move out anaconda build logs and export them for debugging
     [[ -n "$EXTRACT_INSTALL_LOGS" ]] && {
         tmpdir=$(mktemp -d)
-        mkdir $ARTIFACTSDIR/image-logs
+        mkdir $EXPORTED_ARTIFACTS/image-logs
         mv ovirt-node-ng-image.squashfs.img{,.orig}
         unsquashfs ovirt-node-ng-image.squashfs.img.orig
         mount squashfs-root/LiveOS/rootfs.img $tmpdir
-        mv $tmpdir/var/log/anaconda $ARTIFACTSDIR/image-logs/var_log_anaconda || :
-        mv $tmpdir/root/*ks* $ARTIFACTSDIR/image-logs || :
+        mv $tmpdir/var/log/anaconda $EXPORTED_ARTIFACTS/image-logs/var_log_anaconda || :
+        mv $tmpdir/root/*ks* $EXPORTED_ARTIFACTS/image-logs || :
         umount $tmpdir
         rmdir $tmpdir
         mksquashfs squashfs-root ovirt-node-ng-image.squashfs.img -noappend -comp xz
@@ -86,7 +86,7 @@ build() {
     ln -fv \
         *manifest* \
         *unsigned* \
-        "$ARTIFACTSDIR/"
+        "$EXPORTED_ARTIFACTS/"
 
 
     make product.img rpm
@@ -96,7 +96,7 @@ build() {
 #        tmp.repos/RPMS/noarch/*.rpm \
     ln -fv \
         product.img \
-        "$ARTIFACTSDIR/"
+        "$EXPORTED_ARTIFACTS/"
 
 # skip old iso target relying on jenkins and skip the squashfs
 #    make offline-installation-iso
@@ -107,7 +107,7 @@ build() {
 # do not push iso to exported-artifacts, uploaded separately
 #    ln -fv \
 #        ovirt-node*.iso \
-#        "$ARTIFACTSDIR/"
+#        "$EXPORTED_ARTIFACTS/"
 
 }
 
@@ -137,12 +137,12 @@ fetch_remote() {
         -i $sshkey -r root@$addr:$path $dest ||:
 
     [[ -n $compress ]] && {
-        tar czf $dest.tgz $dest && mv $dest.tgz $ARTIFACTSDIR
+        tar czf $dest.tgz $dest && mv $dest.tgz $EXPORTED_ARTIFACTS
     }||:
 }
 
 check_iso() {
-    LOGDIR="${ARTIFACTSDIR}" ISO_INSTALL_TIMEOUT=40 ./scripts/node-setup/setup-node-appliance.sh \
+    LOGDIR="${EXPORTED_ARTIFACTS}" ISO_INSTALL_TIMEOUT=40 ./scripts/node-setup/setup-node-appliance.sh \
         -i ovirt-node*.iso \
         -p ovirt > setup-iso.log 2>&1 || setup_rc=$?
 
@@ -155,7 +155,7 @@ check_iso() {
     fetch_remote "$sshkey" "$addr" "/var/log" "init_var_log" "1"
 
     [[ $setup_rc -ne 0 ]] && {
-        mv ovirt-node*.iso *.tgz $ARTIFACTSDIR
+        mv ovirt-node*.iso *.tgz $EXPORTED_ARTIFACTS
         echo "ISO install failed, exiting"
         exit 1
     }

@@ -4,8 +4,15 @@ on:
   workflow_dispatch:
     inputs:
       keep_workdir:
-        description: set to anything to keep around the work directory for inspection after the job finishes 
+        description: set to anything to keep around the work directory for inspection after the job finishes
         required: false
+      extract_install_logs:
+        description: set to anything to save anaconda logs and remove from rpm/iso
+        required: false
+      finalbuild:
+        description: set to \"True\" for a final build
+        required: true
+        default: "False"
   push:
     branches: [master]
 
@@ -33,7 +40,8 @@ jobs:
 
     - name: Build
       env:
-        EXTRACT_INSTALL_LOGS:
+        EXTRACT_INSTALL_LOGS: ${{ github.event.inputs.extract_install_logs }}
+        FINALBUILD: ${{ github.event.inputs.finalbuild }}
         SUPERMIN_MODULES: /host/modules
         SUPERMIN_KERNEL: /host/modules/vmlinuz
       run: ./build.sh

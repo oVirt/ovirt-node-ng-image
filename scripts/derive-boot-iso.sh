@@ -136,3 +136,5 @@ main() {
 }
 
 main
+
+echo "Built ISO $NEWBOOTISO"

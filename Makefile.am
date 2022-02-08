@@ -57,10 +57,7 @@ offline-installation-iso: product.img
 			   bash scripts/create-nightly-boot-iso.sh
 
 iso: product.img @BOOTISO@ $(SQUASHFSFILENAME)
-	PRODUCTIMG=$(PWD)/product.img bash scripts/derive-boot-iso.sh \
-			   $(BOOTISO) \
-			   $(SQUASHFSFILENAME) \
-			   "$(PWD)/ovirt-node-ng-installer-$(PACKAGE_VERSION)-`date +%Y%m%d%H`.$(DISTRO).iso"
+	scripts/derive-boot-iso.sh $(BOOTISO) $(SQUASHFSFILENAME) "$(PWD)/ovirt-node-ng-installer-$(PACKAGE_VERSION)-`date +%Y%m%d%H`%{dist}.iso"
 
 @BOOTISO@:
 	curl -O $(BOOTISOURL)
