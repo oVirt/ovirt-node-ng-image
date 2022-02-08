@@ -32,6 +32,8 @@ DISTCLEANFILES = \
 	missing \
 	*.log
 
+CURLOPTS=-L4
+
 debug-ks: data/@IMAGENAME@.ks
 	sed -i 's/^poweroff/#poweroff/' $<
 
@@ -60,7 +62,7 @@ iso: product.img @BOOTISO@ $(SQUASHFSFILENAME)
 	scripts/derive-boot-iso.sh $(BOOTISO) $(SQUASHFSFILENAME) "ovirt-node-ng-installer-$(PACKAGE_VERSION)-`date +%Y%m%d%H``rpm --eval %{dist}`.iso"
 
 @BOOTISO@:
-	curl -O $(BOOTISOURL)
+	curl $(CURLOPTS) -O $(BOOTISOURL)
 
 data/%.ks: data/%.j2
 	scripts/renderks.py $(DISTRO) > "$@"
