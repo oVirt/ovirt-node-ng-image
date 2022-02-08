@@ -10,7 +10,7 @@ on:
         description: set to anything to save anaconda logs and remove from rpm/iso
         required: false
       finalbuild:
-        description: set to \"True\" for a final build
+        description: set to True for a final build
         required: true
         default: "False"
   push:
