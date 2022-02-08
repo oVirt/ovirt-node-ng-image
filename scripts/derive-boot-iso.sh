@@ -19,12 +19,21 @@ in_squashfs() { LIBGUESTFS_DEBUG=1 LIBGUESTFS_TRACE=1 TMPDIR=/var/tmp guestfish 
 extract_iso() {
   echo "[1/4] Extracting ISO"
   cond_out checkisomd5 --verbose $BOOTISO
-  local ISOFILES=$(isoinfo -i $BOOTISO -RJ -f | sort -r | egrep "/.*/")
-  for F in $ISOFILES
-  do
-    mkdir -p ./$(dirname $F)
-    [[ -d .$F ]] || { isoinfo -i $BOOTISO -RJ -x $F > .$F ; }
-  done
+  if [[ -f /usr/bin/isoinfo ]]; then
+    local ISOFILES=$(isoinfo -i $BOOTISO -RJ -f | sort -r | egrep "/.*/")
+    for F in $ISOFILES
+    do
+      mkdir -p ./$(dirname $F)
+      [[ -d .$F ]] || { isoinfo -i $BOOTISO -RJ -x $F > .$F ; }
+    done
+  else
+    local ISOFILES=$(xorriso -indev $BOOTISO -find . -maxdepth 1 -type d | tr -d \' | sort -r)
+    for F in $ISOFILES
+    do
+      mkdir -p $(dirname $F)
+      [[ -d $F ]] || { xorriso -indev $BOOTISO -osirrox on -extract $F $F; }
+    done
+  fi
 }
 
 add_payload() {
