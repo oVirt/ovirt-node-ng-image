@@ -4,15 +4,7 @@
 #              NOT FOR INSTALLATION
 #
 
-url {{ data["url"] }}
-
-{%- for r_name, r_url in data["repos"].items() %}
-repo --name={{ r_name }} {{ r_url }}
-{%- endfor %}
-
-{%- if data["updates"] %}
-updates {{ data["updates"] }}
-{%- endif %}
+url --url=http://mirror.centos.org/centos/8-stream/BaseOS/x86_64/os/
 
 
 lang en_US.UTF-8
@@ -29,12 +21,18 @@ part / --size=5120 --fstype=ext4 --fsoptions=discard
 poweroff
 
 
-%packages --excludedocs --ignoremissing {{ data["packages-switch"] }}
+%packages --excludedocs --ignoremissing --excludeWeakdeps
 dracut-config-generic
 -dracut-config-rescue
-{%- for pkg in data["packages"] %}
-{{ pkg }}
-{%- endfor %}
+dracut-live
+python36
+centos-stream-repos
+scap-security-guide
+centos-release-ovirt45
+cockpit
+ovirt-release-host-node
+ovirt-node-ng-image-update-placeholder
+-ovirt-node-ng-image-update
 %end
 
 
@@ -50,10 +48,8 @@ dnf repolist disabled
 
 # Adding upstream oVirt vdsm
 # 1. Install oVirt release file with repositories
+dnf config-manager --set-enabled powertools || true
 
-{%- for addrepo in data["needed_repos"] %}
-{{ addrepo }}
-{%- endfor %}
 
 yum -y --nogpgcheck --nodocs --setopt=install_weak_deps=False distro-sync
 
@@ -63,7 +59,7 @@ yum -y --nogpgcheck --nodocs --setopt=install_weak_deps=False distro-sync
 yum install --nogpgcheck --nodocs --setopt=install_weak_deps=False -y cockpit
 
 # 1.a Ensure that we use baseurls to ensure we always pick
-#     the mist recent content (right after repo composes/releases)
+#     the most recent content (right after repo composes/releases)
 sed -i "/^mirrorlist/ d ; s/^#baseurl/baseurl/" $(find /etc/yum.repos.d/*ovirt*.repo -type f ! -name "*dep*")
 
 # Try to work around failure to sync repo
@@ -86,10 +82,9 @@ imgbase --debug --experimental \
   --postprocess \
   --set-nvr=$(rpm -q --qf "ovirt-node-ng-%{version}-0.$(date +%Y%m%d).0" ovirt-release-host-node)
 %end
-
-
-{%- for post in data["post"] %}
 %post
-{{ post }}
+ver=$(rpm -qf /etc/yum.repos.d/ovirt* | grep ^ovirt-release | sort -u | sed 's/ovirt-release//' | cut -b1)
+[[ $ver = "-" ]] && ver="m"
+ln -sf /usr/share/xml/scap/ssg/content/{ssg-rhel8,ssg-onn$ver}-ds.xml
+
 %end
-{%- endfor %}

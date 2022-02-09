@@ -7,6 +7,8 @@ centos8stream:
     extras: --mirrorlist=http://mirrorlist.centos.org/?repo=Extras&release=8-stream&arch=$basearch
   needed_repos:
     - |
+        rpm --import https://download.copr.fedorainfracloud.org/results/ovirt/ovirt-master-snapshot/pubkey.gpg
+        dnf --repofrompath=ovirt-master-snapshot,https://download.copr.fedorainfracloud.org/results/ovirt/ovirt-master-snapshot/{{ data["copr-repo"] }}/ install -y ovirt-release-master
         dnf config-manager --set-enabled powertools || true
   packages-switch: --excludeWeakdeps
   copr-repo: centos-stream-8-x86_64
@@ -20,6 +22,30 @@ centos8stream:
         ver=$(rpm -qf /etc/yum.repos.d/ovirt* | grep ^ovirt-release | sort -u | sed 's/ovirt-release//' | cut -b1)
         [[ $ver = "-" ]] && ver="m"
         ln -sf /usr/share/xml/scap/ssg/content/{ssg-rhel8,ssg-onn$ver}-ds.xml
+
+cbs8s:
+  url: --url=http://mirror.centos.org/centos/8-stream/BaseOS/x86_64/os/
+  repos: {}
+  needed_repos:
+    - |
+        dnf config-manager --set-enabled powertools || true
+  packages-switch: --excludeWeakdeps
+  packages:
+    - dracut-live
+    - python36
+    - centos-stream-repos
+    - scap-security-guide  # needed for post action
+    - centos-release-ovirt45 # needed to get additional repos
+    - cockpit
+    - ovirt-release-host-node
+    - ovirt-node-ng-image-update-placeholder
+    - -ovirt-node-ng-image-update
+  post:
+    - |
+        ver=$(rpm -qf /etc/yum.repos.d/ovirt* | grep ^ovirt-release | sort -u | sed 's/ovirt-release//' | cut -b1)
+        [[ $ver = "-" ]] && ver="m"
+        ln -sf /usr/share/xml/scap/ssg/content/{ssg-rhel8,ssg-onn$ver}-ds.xml
+
 c9s:
   url: --metalink=https://mirrors.centos.org/metalink?repo=centos-baseos-$stream&arch=$basearch
   repos:
@@ -27,6 +53,8 @@ c9s:
     crb: --metalink=https://mirrors.centos.org/metalink?repo=centos-crb-$stream&arch=$basearch
   needed_repos:
     - |
+        rpm --import https://download.copr.fedorainfracloud.org/results/ovirt/ovirt-master-snapshot/pubkey.gpg
+        dnf --repofrompath=ovirt-master-snapshot,https://download.copr.fedorainfracloud.org/results/ovirt/ovirt-master-snapshot/{{ data["copr-repo"] }}/ install -y ovirt-release-master
         dnf config-manager --set-enabled crb || true
   packages-switch: --excludeWeakdeps
   copr-repo: centos-stream-9-x86_64
