@@ -59,7 +59,7 @@ yum -y --nogpgcheck --nodocs --setopt=install_weak_deps=False distro-sync
 yum install --nogpgcheck --nodocs --setopt=install_weak_deps=False -y cockpit
 
 # 1.a Ensure that we use baseurls to ensure we always pick
-#     the mist recent content (right after repo composes/releases)
+#     the most recent content (right after repo composes/releases)
 sed -i "/^mirrorlist/ d ; s/^#baseurl/baseurl/" $(find /etc/yum.repos.d/*ovirt*.repo -type f ! -name "*dep*")
 
 # Try to work around failure to sync repo
