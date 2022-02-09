@@ -11,7 +11,7 @@ arches: x86_64
 distro: Fedora-29
 # - ksversion refer to pykickstart handler
 # Within CBS RHEL 9 is not supported and so F29 and later.
-# Going with F28 head to having anaconda requinring inst prefix to all commands within the kickstart.
+# Going with F28 head to having anaconda requiring inst prefix to all commands within the kickstart.
 # Trying again without  metalink which is unsupported in F24
 ksversion: F24
 kickstart: ovirt-node-ng-image.ks
