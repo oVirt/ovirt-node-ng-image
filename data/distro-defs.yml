@@ -8,10 +8,9 @@ centos8stream:
   needed_repos:
     - |
         rpm --import https://download.copr.fedorainfracloud.org/results/ovirt/ovirt-master-snapshot/pubkey.gpg
-        dnf --repofrompath=ovirt-master-snapshot,https://download.copr.fedorainfracloud.org/results/ovirt/ovirt-master-snapshot/{{ data["copr-repo"] }}/ install -y ovirt-release-master
+        dnf --repofrompath=ovirt-master-snapshot,https://download.copr.fedorainfracloud.org/results/ovirt/ovirt-master-snapshot/centos-stream-8-x86_64/ install -y ovirt-release-master
         dnf config-manager --set-enabled powertools || true
   packages-switch: --excludeWeakdeps
-  copr-repo: centos-stream-8-x86_64
   packages:
     - dracut-live
     - python36
@@ -54,10 +53,9 @@ c9s:
   needed_repos:
     - |
         rpm --import https://download.copr.fedorainfracloud.org/results/ovirt/ovirt-master-snapshot/pubkey.gpg
-        dnf --repofrompath=ovirt-master-snapshot,https://download.copr.fedorainfracloud.org/results/ovirt/ovirt-master-snapshot/{{ data["copr-repo"] }}/ install -y ovirt-release-master
+        dnf --repofrompath=ovirt-master-snapshot,https://download.copr.fedorainfracloud.org/results/ovirt/ovirt-master-snapshot/centos-stream-9-x86_64/ install -y ovirt-release-master
         dnf config-manager --set-enabled crb || true
   packages-switch: --excludeWeakdeps
-  copr-repo: centos-stream-9-x86_64
   packages:
     - dracut-live
     - centos-stream-repos
