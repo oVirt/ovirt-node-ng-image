@@ -17,22 +17,35 @@ on:
     branches: [master]
 
 jobs:
-  get-kernel:
-    runs-on: image-builders
-    outputs:
-      kernel_version: ${{ steps.get-kernel.outputs.kernel_version }}
+  set-kernel:
+    strategy:
+      matrix:
+          name: [ el8, el9 ]
+    runs-on: [ image-builders, "${{ matrix.name }}" ]
     steps:
-    - id: get-kernel
+    - name: mount /host/modules
       run: |
         echo "Kernel version $(uname -r)"
-        echo "::set-output name=kernel_version::$(uname -r)"
+        mkdir -p /host/modules
+        umount -f /host/modules 2>/dev/null || true
+        mount --bind /lib/modules/$(uname -r) /host/modules
 
-  build-el8:
-    runs-on: image-builders
-    needs: get-kernel
+  build-matrix:
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - name: el8
+            container-name: el8stream
+          - name: el9
+            container-name: el9stream
+    runs-on: [ image-builders, "${{ matrix.name }}" ]
+    needs: set-kernel
     container:
-      image: quay.io/ovirt/buildcontainer:el8stream
-      options: --privileged --rm -v /lib/modules/${{ needs.get-kernel.outputs.kernel_version }}:/host/modules
+      image: quay.io/ovirt/buildcontainer:${{ matrix.container-name }}
+      volumes:
+        - /host/modules:/host/modules
+      options: --privileged
 
     steps:
     - name: Checkout
@@ -53,7 +66,7 @@ jobs:
         key: ${{ secrets.SSH_KEY_FOR_RESOURCES_OVIRT_ORG }}
         known_hosts: ${{ secrets.KNOWN_HOSTS_FOR_RESOURCES_OVIRT_ORG }}
         source: tmp.repos/RPMS/noarch/*.rpm
-        target: github-ci/ovirt-node-ng-image/el8
+        target: github-ci/ovirt-node-ng-image/${{ matrix.name }}
         cleanup: yes
         createrepo: yes
         # keep 10 last builds + repodata
@@ -79,7 +92,8 @@ jobs:
         path: |
           exported-artifacts
 
-    - name: Clean up entire workdir
+    - name: Clean up mount and entire workdir
       if: always()
       run: |
+        umount -f /host/modules
         [[ -z "${{ github.event.inputs.keep_workdir }}" ]] && rm -rf $PWD/*
