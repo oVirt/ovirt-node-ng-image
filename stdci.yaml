@@ -5,6 +5,6 @@ stage:
   - check-patch:
       runtime-requirements:
         support-nesting-level: 2
-distro: el8
+distro: el8stream
 release_branches:
   ovirt-4.4: ovirt-4.4
