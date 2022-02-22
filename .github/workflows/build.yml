@@ -1,0 +1,97 @@
+name: Build
+
+on:
+  workflow_dispatch:
+    inputs:
+      keep_workdir:
+        description: set to anything to keep around the work directory for inspection after the job finishes
+        required: false
+      extract_install_logs:
+        description: set to anything to save anaconda logs and remove from rpm/iso
+        required: false
+      finalbuild:
+        description: set to True for a final build
+        required: true
+        default: "False"
+  push:
+    branches: [ovirt-4.4]
+
+jobs:
+  set-kernel:
+    strategy:
+      matrix:
+          name: [ el8, ]
+    runs-on: [ image-builders, "${{ matrix.name }}" ]
+    steps:
+    - name: mount /host/modules
+      run: |
+        echo "Kernel version $(uname -r)"
+        mkdir -p /host/modules
+        umount -f /host/modules 2>/dev/null || true
+        mount --bind /lib/modules/$(uname -r) /host/modules
+
+  build-matrix:
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - name: el8
+            container-name: el8stream
+    runs-on: [ image-builders, "${{ matrix.name }}" ]
+    needs: set-kernel
+    container:
+      image: quay.io/ovirt/buildcontainer:${{ matrix.container-name }}
+      volumes:
+        - /host/modules:/host/modules
+      options: --privileged
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v2
+
+    - name: Build
+      env:
+        EXTRACT_INSTALL_LOGS: ${{ github.event.inputs.extract_install_logs }}
+        FINALBUILD: ${{ github.event.inputs.finalbuild }}
+        SUPERMIN_MODULES: /host/modules
+        SUPERMIN_KERNEL: /host/modules/vmlinuz
+      run: ./build.sh
+
+    - name: Upload rpm to resources.ovirt.org
+      uses: ovirt/ovirt-resources-upload-action@main
+      with:
+        username: ${{ secrets.SSH_USERNAME_FOR_RESOURCES_OVIRT_ORG }}
+        key: ${{ secrets.SSH_KEY_FOR_RESOURCES_OVIRT_ORG }}
+        known_hosts: ${{ secrets.KNOWN_HOSTS_FOR_RESOURCES_OVIRT_ORG }}
+        source: tmp.repos/RPMS/noarch/*.rpm
+        target: github-ci/ovirt-node-ng-image/${{ matrix.name }}
+        cleanup: yes
+        createrepo: yes
+        # keep 10 last builds + repodata
+        keep_files_count: 11
+
+    - name: Upload iso to resources.ovirt.org
+      uses: ovirt/ovirt-resources-upload-action@main
+      with:
+        username: ${{ secrets.SSH_USERNAME_FOR_RESOURCES_OVIRT_ORG }}
+        key: ${{ secrets.SSH_KEY_FOR_RESOURCES_OVIRT_ORG }}
+        known_hosts: ${{ secrets.KNOWN_HOSTS_FOR_RESOURCES_OVIRT_ORG }}
+        source: ovirt-node-ng-installer-*.iso
+        target: github-ci/ovirt-node-ng-image
+        cleanup: yes
+        createrepo: no
+        # keep 20 last builds
+        keep_files_count: 20
+
+    - name: Upload logs and manifests to github
+      uses: actions/upload-artifact@v2
+      with:
+        name: logs-and-manifests
+        path: |
+          exported-artifacts
+
+    - name: Clean up mount and entire workdir
+      if: always()
+      run: |
+        umount -f /host/modules
+        [[ -z "${{ github.event.inputs.keep_workdir }}" ]] && rm -rf $PWD/*
