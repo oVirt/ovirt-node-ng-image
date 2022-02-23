@@ -1,4 +1,0 @@
----
-- name: GERRIT_BRANCH
-  valueFrom:
-      runtimeEnv: GERRIT_BRANCH

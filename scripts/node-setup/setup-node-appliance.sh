@@ -224,8 +224,13 @@ chpasswd:
     root:$vmpasswd
   expire: False
 EOF
-    genisoimage -quiet -output $WORKDIR/ci.iso -volid cidata \
+    if [[ -f /usr/bin/genisoimage ]]; then
+        genisoimage -quiet -output $WORKDIR/ci.iso -volid cidata \
                         -joliet -rock $tmpdir/* || die "genisoimage failed"
+    else
+        xorriso -quiet -output $WORKDIR/ci.iso -volid cidata \
+                        -joliet -rock $tmpdir/* || die "xorriso failed"
+    fi
 
     rm -rf $tmpdir
 }
@@ -353,7 +358,7 @@ EOF
         --noreboot \
         --check all=off \
         --wait $ISO_INSTALL_TIMEOUT \
-        --os-variant rhel8.0 \
+        --os-variant rhel8.5 \
         --noautoconsole \
         --rng /dev/urandom \
         --network network:${LIBVIRT_NETWORK},model=virtio  \
@@ -423,7 +428,7 @@ setup_node() {
         --graphics none \
         --noreboot \
         --wait -1 \
-        --os-variant rhel8.0 \
+        --os-variant rhel8.5 \
         --noautoconsole \
         --rng /dev/urandom \
         --network network:${LIBVIRT_NETWORK},model=virtio  \
