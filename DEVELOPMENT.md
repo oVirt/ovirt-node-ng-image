@@ -13,15 +13,36 @@ as `root` user:
 
 ```bash
 # install build dependencies
-dnf install -y $(cat automation/build-artifacts.req.el8)
+dnf install -y \
+    autoconf \
+    automake \
+    expect \
+    kernel-modules \
+    libguestfs-tools \
+    libosinfo \
+    libvirt-client \
+    lorax \
+    make \
+    openssh \
+    openssh-clients \
+    pigz \
+    python3-jinja2 \
+    python3-pyyaml \
+    rpm-build \
+    squashfs-tools \
+    virt-install \
+    wget \
+    xorriso
 
 # check lorax version, you'll need lorax >= 28.14.57-2.el8
 rpm -qv lorax
 
 # run automated build
-export STD_CI_STAGE="build-artifacts"
-./automation/build-artifacts.sh
+export SUPERMIN_MODULES="/usr/lib/modules/$(uname -r)"
+./build.sh
 ```
+
+
 
 ## Testing a change locally
 
@@ -29,13 +50,7 @@ Automated testing implies an oVirt Node build, an execution of the oVirt Node wi
 The whole process can be triggered as `root` user with the same recommendations as for building oVirt Node.
 
 ```bash
-# install test dependencies
-dnf install -y $(cat automation/check-patch.req.el8)
-
-# check lorax version, you'll need lorax >= 28.14.57-2.el8
-rpm -qv lorax
-
-# run automated tests
-export STD_CI_STAGE="check-patch"
-./automation/check-patch.sh
+export SUPERMIN_MODULES="/usr/lib/modules/$(uname -r)"
+export CHECK_ISO="True"
+./build.sh
 ```

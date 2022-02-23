@@ -13,6 +13,9 @@ on:
         description: set to True for a final build
         required: true
         default: "False"
+      checkiso:
+        description: set to anything to verify the ISO
+        required: false
   push:
     branches: [master]
 
@@ -55,6 +58,7 @@ jobs:
       env:
         EXTRACT_INSTALL_LOGS: ${{ github.event.inputs.extract_install_logs }}
         FINALBUILD: ${{ github.event.inputs.finalbuild }}
+        CHECK_ISO: ${{ github.event.inputs.checkiso }}
         SUPERMIN_MODULES: /host/modules
         SUPERMIN_KERNEL: /host/modules/vmlinuz
       run: ./build.sh

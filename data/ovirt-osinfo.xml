@@ -2,6 +2,7 @@
 <libosinfo version="0.0.1">
 
   <os id="http://ovirt.org/ovirt/4">
+    <short-id>ovirt-4</short-id>
     <name>oVirt 4</name>
 
     <media arch="x86_64">
@@ -23,4 +24,3 @@
     </media>
   </os>
 </libosinfo>
-

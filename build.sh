@@ -174,6 +174,6 @@ check_iso() {
 
 prepare
 build
-# check_iso not working
+[[ -n "$CHECK_ISO" ]] && check_iso
 
 echo "Done."
