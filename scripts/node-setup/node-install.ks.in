@@ -4,7 +4,7 @@
 lang en_US.UTF-8
 keyboard --vckeymap=us --xlayouts=''
 timezone Etc/UTC --isUtc
-auth --enableshadow --passalgo=sha512
+authselect select minimal
 selinux --enforcing
 network --bootproto=dhcp --hostname=@HOSTNAME@
 firstboot --reconfig
