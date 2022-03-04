@@ -17,7 +17,7 @@ on:
         description: set to anything to verify the ISO
         required: false
   push:
-    branches: [master]
+    branches: [ovirt-4.5]
 
 jobs:
   set-kernel:
