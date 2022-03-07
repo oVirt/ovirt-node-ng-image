@@ -52,6 +52,9 @@ c9s:
     crb: --metalink=https://mirrors.centos.org/metalink?repo=centos-crb-$stream&arch=$basearch
   needed_repos:
     - |
+        dnf install -y crypto-policies-scripts crypto-policies
+        # until https://pagure.io/copr/copr/issue/2106 is fixed
+        update-crypto-policies --set LEGACY
         rpm --import https://download.copr.fedorainfracloud.org/results/ovirt/ovirt-master-snapshot/pubkey.gpg
         dnf --repofrompath=ovirt-master-snapshot,https://download.copr.fedorainfracloud.org/results/ovirt/ovirt-master-snapshot/centos-stream-9-x86_64/ install -y ovirt-release-master
         dnf config-manager --set-enabled crb || true
