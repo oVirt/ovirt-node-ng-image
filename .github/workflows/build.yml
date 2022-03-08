@@ -144,10 +144,10 @@ jobs:
           LABEL="build-failed"
           ISSUENO=$(gh issue list -l $LABEL | awk ' { print $1 } ' | head -n 1)
           if [ -z "$ISSUENO" ]; then
-              MESSAGE="❌ The oVirt Node build CI job failed. [Please investigate.](https://github.com/oVirt/ovirt-release/actions/runs/${{ github.run_id }})"
+              MESSAGE="❌ The oVirt Node build CI job failed. [Please investigate.](https://github.com/oVirt/ovirt-node-ng-image/actions/runs/${{ github.run_id }})"
               gh issue create --title "${TITLE}" --body "${MESSAGE}" --label "${LABEL}"
           else
-              MESSAGE="❌ oVirt Node build CI job is still failing. [Please investigate.](https://github.com/oVirt/ovirt-release/actions/runs/${{ github.run_id }})"
+              MESSAGE="❌ oVirt Node build CI job is still failing. [Please investigate.](https://github.com/oVirt/ovirt-node-ng-image/actions/runs/${{ github.run_id }})"
               gh issue comment "${ISSUENO}" --body "${MESSAGE}"
           fi
         env:
