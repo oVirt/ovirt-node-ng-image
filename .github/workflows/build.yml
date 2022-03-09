@@ -70,7 +70,7 @@ jobs:
         key: ${{ secrets.SSH_KEY_FOR_RESOURCES_OVIRT_ORG }}
         known_hosts: ${{ secrets.KNOWN_HOSTS_FOR_RESOURCES_OVIRT_ORG }}
         source: tmp.repos/RPMS/noarch/*.rpm
-        target: github-ci/ovirt-node-ng-image/${{ matrix.name }}
+        target: github-ci/ovirt-node-ng-image-4.5/${{ matrix.name }}
         cleanup: yes
         createrepo: yes
         # keep 10 last builds + repodata
@@ -83,7 +83,7 @@ jobs:
         key: ${{ secrets.SSH_KEY_FOR_RESOURCES_OVIRT_ORG }}
         known_hosts: ${{ secrets.KNOWN_HOSTS_FOR_RESOURCES_OVIRT_ORG }}
         source: ovirt-node-ng-installer-*.iso
-        target: github-ci/ovirt-node-ng-image
+        target: github-ci/ovirt-node-ng-image-4.5
         cleanup: yes
         createrepo: no
         # keep 20 last builds
