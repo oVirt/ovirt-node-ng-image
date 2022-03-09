@@ -1,3 +1,4 @@
+---
 name: Build
 
 on:
@@ -23,15 +24,15 @@ jobs:
   set-kernel:
     strategy:
       matrix:
-          name: [ el8, el9 ]
-    runs-on: [ image-builders, "${{ matrix.name }}" ]
+        name: [el8, el9]
+    runs-on: [image-builders, "${{ matrix.name }}"]
     steps:
-    - name: mount /host/modules
-      run: |
-        echo "Kernel version $(uname -r)"
-        mkdir -p /host/modules
-        umount -f /host/modules 2>/dev/null || true
-        mount --bind /lib/modules/$(uname -r) /host/modules
+      - name: mount /host/modules
+        run: |
+          echo "Kernel version $(uname -r)"
+          mkdir -p /host/modules
+          umount -f /host/modules 2>/dev/null || true
+          mount --bind /lib/modules/$(uname -r) /host/modules
 
   build-matrix:
     strategy:
@@ -42,7 +43,7 @@ jobs:
             container-name: el8stream
           - name: el9
             container-name: el9stream
-    runs-on: [ image-builders, "${{ matrix.name }}" ]
+    runs-on: [image-builders, "${{ matrix.name }}"]
     needs: set-kernel
     container:
       image: quay.io/ovirt/buildcontainer:${{ matrix.container-name }}
@@ -51,53 +52,54 @@ jobs:
       options: --privileged
 
     steps:
-    - name: Checkout
-      uses: actions/checkout@v2
+      - name: Checkout
+        uses: actions/checkout@v2
 
-    - name: Build
-      env:
-        EXTRACT_INSTALL_LOGS: ${{ github.event.inputs.extract_install_logs }}
-        FINALBUILD: ${{ github.event.inputs.finalbuild }}
-        CHECK_ISO: ${{ github.event.inputs.checkiso }}
-        SUPERMIN_MODULES: /host/modules
-        SUPERMIN_KERNEL: /host/modules/vmlinuz
-      run: ./build.sh
+      - name: Build
+        env:
+          EXTRACT_INSTALL_LOGS: ${{ github.event.inputs.extract_install_logs }}
+          FINALBUILD: ${{ github.event.inputs.finalbuild }}
+          CHECK_ISO: ${{ github.event.inputs.checkiso }}
+          SUPERMIN_MODULES: /host/modules
+          SUPERMIN_KERNEL: /host/modules/vmlinuz
+        run: ./build.sh
 
-    - name: Upload rpm to resources.ovirt.org
-      uses: ovirt/ovirt-resources-upload-action@main
-      with:
-        username: ${{ secrets.SSH_USERNAME_FOR_RESOURCES_OVIRT_ORG }}
-        key: ${{ secrets.SSH_KEY_FOR_RESOURCES_OVIRT_ORG }}
-        known_hosts: ${{ secrets.KNOWN_HOSTS_FOR_RESOURCES_OVIRT_ORG }}
-        source: tmp.repos/RPMS/noarch/*.rpm
-        target: github-ci/ovirt-node-ng-image-4.5/${{ matrix.name }}
-        cleanup: yes
-        createrepo: yes
-        # keep 10 last builds + repodata
-        keep_files_count: 11
+      - name: Upload rpm to resources.ovirt.org
+        uses: ovirt/ovirt-resources-upload-action@main
+        with:
+          username: ${{ secrets.SSH_USERNAME_FOR_RESOURCES_OVIRT_ORG }}
+          key: ${{ secrets.SSH_KEY_FOR_RESOURCES_OVIRT_ORG }}
+          known_hosts: ${{ secrets.KNOWN_HOSTS_FOR_RESOURCES_OVIRT_ORG }}
+          source: tmp.repos/RPMS/noarch/*.rpm
+          target: github-ci/ovirt-node-ng-image-4.5/${{ matrix.name }}
+          cleanup: yes
+          createrepo: yes
+          # keep 10 last builds + repodata
+          keep_files_count: 11
 
-    - name: Upload iso to resources.ovirt.org
-      uses: ovirt/ovirt-resources-upload-action@main
-      with:
-        username: ${{ secrets.SSH_USERNAME_FOR_RESOURCES_OVIRT_ORG }}
-        key: ${{ secrets.SSH_KEY_FOR_RESOURCES_OVIRT_ORG }}
-        known_hosts: ${{ secrets.KNOWN_HOSTS_FOR_RESOURCES_OVIRT_ORG }}
-        source: ovirt-node-ng-installer-*.iso
-        target: github-ci/ovirt-node-ng-image-4.5
-        cleanup: yes
-        createrepo: no
-        # keep 20 last builds
-        keep_files_count: 20
+      - name: Upload iso to resources.ovirt.org
+        uses: ovirt/ovirt-resources-upload-action@main
+        with:
+          username: ${{ secrets.SSH_USERNAME_FOR_RESOURCES_OVIRT_ORG }}
+          key: ${{ secrets.SSH_KEY_FOR_RESOURCES_OVIRT_ORG }}
+          known_hosts: ${{ secrets.KNOWN_HOSTS_FOR_RESOURCES_OVIRT_ORG }}
+          source: ovirt-node-ng-installer-*.iso
+          target: github-ci/ovirt-node-ng-image-4.5
+          cleanup: yes
+          createrepo: no
+          # keep 20 last builds
+          keep_files_count: 20
 
-    - name: Upload logs and manifests to github
-      uses: actions/upload-artifact@v2
-      with:
-        name: logs-and-manifests
-        path: |
-          exported-artifacts
 
-    - name: Clean up mount and entire workdir
-      if: always()
-      run: |
-        umount -f /host/modules
-        [[ -z "${{ github.event.inputs.keep_workdir }}" ]] && rm -rf $PWD/*
+      - name: Upload logs and manifests to github
+        uses: actions/upload-artifact@v2
+        with:
+          name: "logs-and-manifests${{ matrix.name }}"
+          path: |
+            exported-artifacts
+
+      - name: Clean up mount and entire workdir
+        if: always()
+        run: |
+          umount -f /host/modules
+          [[ -z "${{ github.event.inputs.keep_workdir }}" ]] && rm -rf $PWD/*
