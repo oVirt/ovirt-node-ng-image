@@ -109,7 +109,19 @@ modify_bootloader() {
 
 create_iso() {
   echo "[4/4] Creating new ISO"
-  local volid=$(isoinfo -d -i $BOOTISO | grep "Volume id" | cut -d ":" -f2 | sed "s/^ //")
+  local volid
+  if command -v isoinfo &> /dev/null
+  then
+      echo "Using isoinfo"
+      volid=$(isoinfo -d -i "${BOOTISO}" | grep "Volume id" | cut -d ":" -f2 | sed "s/^ //")
+  elif command -v xorriso &> /dev/null
+  then
+      echo "Using xorriso"
+      volid=$(xorriso -indev CentOS-Stream-9-latest-x86_64-boot.iso 2>&1 | grep "Volume id" |cut -d ":" -f2 | sed "s/^ //"|sed  "s/'//g")
+  else
+      echo "Error - Couldn't find either isoinfo nor xorriro. Quiting..."
+      exit 1
+  fi
   rm -rvf $TMPDIR/tmp*
   mkisofs -J -T -U \
       -joliet-long \
