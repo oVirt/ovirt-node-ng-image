@@ -119,7 +119,7 @@ create_iso() {
       echo "Using xorriso"
       volid=$(xorriso -indev "${BOOTISO}" 2>&1 | grep "Volume id" |cut -d ":" -f2 | sed "s/^ //"|sed  "s/'//g")
   else
-      echo "Error - Couldn't find either isoinfo nor xorriro. Quiting..."
+      echo "Error - Couldn't find either isoinfo nor xorriro. Quitting..."
       exit 1
   fi
   rm -rvf $TMPDIR/tmp*
