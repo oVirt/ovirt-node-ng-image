@@ -51,7 +51,7 @@ c9s:
         dnf install -y crypto-policies-scripts crypto-policies
         # until https://pagure.io/copr/copr/issue/2106 is fixed
         update-crypto-policies --set LEGACY
-        dnf --repofrompath=extras-common,https://buildlogs.centos.org/centos/9-stream/extras/x86_64/extras-common/  install -y --nogpgcheck centos-release-ovirt45
+        dnf install -y centos-release-ovirt45
         dnf config-manager --set-enabled centos-ovirt45-testing
         dnf config-manager --set-enabled ovirt-45-upstream-testing
 
