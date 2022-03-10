@@ -117,7 +117,7 @@ create_iso() {
   elif command -v xorriso &> /dev/null
   then
       echo "Using xorriso"
-      volid=$(xorriso -indev CentOS-Stream-9-latest-x86_64-boot.iso 2>&1 | grep "Volume id" |cut -d ":" -f2 | sed "s/^ //"|sed  "s/'//g")
+      volid=$(xorriso -indev "${BOOTISO}" 2>&1 | grep "Volume id" |cut -d ":" -f2 | sed "s/^ //"|sed  "s/'//g")
   else
       echo "Error - Couldn't find either isoinfo nor xorriro. Quiting..."
       exit 1
