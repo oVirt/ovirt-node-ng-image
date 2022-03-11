@@ -58,10 +58,6 @@ yum -y --nogpgcheck --nodocs --setopt=install_weak_deps=False distro-sync
 # Adds the latest cockpit bits
 yum install --nogpgcheck --nodocs --setopt=install_weak_deps=False -y cockpit
 
-# 1.a Ensure that we use baseurls to ensure we always pick
-#     the most recent content (right after repo composes/releases)
-sed -i "/^mirrorlist/ d ; s/^#baseurl/baseurl/" $(find /etc/yum.repos.d/*ovirt*.repo -type f ! -name "*dep*")
-
 # Try to work around failure to sync repo
 dnf clean all
 rm -rf /var/cache/dnf
@@ -83,8 +79,6 @@ imgbase --debug --experimental \
   --set-nvr=$(rpm -q --qf "ovirt-node-ng-%{version}-0.$(date +%Y%m%d).0" ovirt-release-host-node)
 %end
 %post
-ver=$(rpm -qf /etc/yum.repos.d/ovirt* | grep ^ovirt-release | sort -u | sed 's/ovirt-release//' | cut -b1)
-[[ $ver = "-" ]] && ver="m"
-ln -sf /usr/share/xml/scap/ssg/content/{ssg-rhel8,ssg-onn$ver}-ds.xml
+ln -sf /usr/share/xml/scap/ssg/content/{ssg-rhel8,ssg-onn45}-ds.xml
 
 %end
