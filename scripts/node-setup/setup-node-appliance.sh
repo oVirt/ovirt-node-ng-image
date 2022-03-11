@@ -326,7 +326,7 @@ setup_node_iso() {
 timezone --utc Etc/UTC
 lang en_US.UTF-8
 keyboard us
-auth --enableshadow --passalgo=sha512
+authselect select minimal
 selinux --enforcing
 network --bootproto=dhcp --hostname=$name
 firstboot --reconfig
