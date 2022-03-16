@@ -1,5 +1,9 @@
 ---
 name: Build
+permissions:
+  issues: write
+  pull-requests: read
+  contents: read
 
 on:
   workflow_dispatch:
