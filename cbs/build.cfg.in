@@ -15,7 +15,7 @@ distro: Fedora-29
 # Trying again without  metalink which is unsupported in F24
 ksversion: F24
 kickstart: ovirt-node-ng-image.ks
-specfile: git+https://git.centos.org/rpms/ovirt-node-ng-image.git#3f16f8c51b1ff9aa8666c657343d2d0875d5ba1b
+specfile: git+https://git.centos.org/rpms/ovirt-node-ng-image.git#b0785106d8920a2c6efe47d25371f636da397660
 format: liveimg-squashfs
 disk_size: 10
 # assuming things built within CBS will be available
