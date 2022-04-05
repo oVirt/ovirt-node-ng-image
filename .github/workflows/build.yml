@@ -42,6 +42,7 @@ jobs:
           mount --bind /lib/modules/$(uname -r) /host/modules
 
   build-matrix:
+    timeout-minutes: 60
     strategy:
       fail-fast: false
       matrix:
