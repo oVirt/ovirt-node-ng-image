@@ -7,9 +7,8 @@ centos8stream:
     extras: --mirrorlist=http://mirrorlist.centos.org/?repo=Extras&release=8-stream&arch=$basearch
   needed_repos:
     - |
-        dnf --repofrompath=extras-common-testing,https://buildlogs.centos.org/centos/8-stream/extras/x86_64/extras-common/  install -y --nogpgcheck centos-release-ovirt45
-        dnf config-manager --set-enabled centos-ovirt45-testing
-        dnf config-manager --set-enabled ovirt-45-upstream-testing
+        dnf install -y centos-release-ovirt45
+
   packages-switch: --excludeWeakdeps
   packages:
     - dracut-live
@@ -52,8 +51,6 @@ c9s:
         # until https://pagure.io/copr/copr/issue/2106 is fixed
         update-crypto-policies --set LEGACY
         dnf install -y centos-release-ovirt45
-        dnf config-manager --set-enabled centos-ovirt45-testing
-        dnf config-manager --set-enabled ovirt-45-upstream-testing
 
   packages-switch: --excludeWeakdeps
   packages:
