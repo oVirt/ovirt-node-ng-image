@@ -1,4 +1,4 @@
-dnl Copyright (C) 2016 Red Hat, Inc.
+dnl Copyright (C) 2016-2022 Red Hat, Inc.
 dnl
 dnl This program is free software; you can redistribute it and/or modify
 dnl it under the terms of the GNU General Public License as published by
