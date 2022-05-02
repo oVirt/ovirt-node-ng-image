@@ -26,7 +26,7 @@ cp "$SRCDIR"/sidebar-logo.png "$PIXMAPDIR/"
 if [[ -n $SHIP_OVIRT_CONF ]]; then
     product_conf_dir=$PRDDIR/etc/anaconda/product.d
     mkdir -p $product_conf_dir
-    cp $DATADIR/ovirt.conf $product_conf_dir
+    cp $DATADIR/ovirt$(rpm --eval "%dist").conf $product_conf_dir/ovirt.conf
 fi
 
 if [[ -n $SSG_TARGET_XML ]]; then
