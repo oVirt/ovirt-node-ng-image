@@ -82,6 +82,7 @@ jobs:
           target: github-ci/ovirt-node-ng-image/${{ matrix.name }}
           cleanup: yes
           createrepo: yes
+          delete_before_upload: yes
           # keep 10 last builds + repodata
           keep_files_count: 11
 
@@ -95,6 +96,7 @@ jobs:
           target: github-ci/ovirt-node-ng-image
           cleanup: yes
           createrepo: no
+          delete_before_upload: yes
           # keep 20 last builds
           keep_files_count: 20
 
