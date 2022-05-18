@@ -34,7 +34,7 @@ prepare() {
 
     virt-host-validate ||:
 
-    [ -f ${SUPERMIN_MODULES}/kernel/fs/squashfs/squashfs* ] || { echo missing squashfs module in ${SUPERMIN_MODULES}; exit 1; }
+    [ -f ${SUPERMIN_MODULES}/kernel/fs/squashfs/squashfs* ] || { echo "missing squashfs module in ${SUPERMIN_MODULES}"; exit 1; }
 }
 
 prepare_osinfo_db() {
@@ -47,23 +47,40 @@ build() {
     dist="$(rpm --eval %{dist})"
     dist=${dist##.}
 
-    case ${dist} in
-        el8)
-            prepare_osinfo_db
-            export SSG_TARGET_XML=/usr/share/xml/scap/ssg/content/ssg-rhel8-ds.xml
-            export SHIP_OVIRT_CONF=1
-            ./autogen.sh
-            ;;
-        el9)
-            prepare_osinfo_db
-            export SSG_TARGET_XML=/usr/share/xml/scap/ssg/content/ssg-rhel9-ds.xml
-            export SHIP_OVIRT_CONF=1
-            ./autogen.sh \
-                --with-distro=c9s \
-                --with-bootisourl=http://mirror.stream.centos.org/9-stream/BaseOS/x86_64/iso/CentOS-Stream-9-latest-x86_64-boot.iso
-            ;;
-    esac
-
+    if [ "$(rpm --eval %{almalinux})" == "9" ] ; then
+                prepare_osinfo_db
+                # Replace SSG TARGET with ssg-rhel9-ds.xml equivalent
+                export SSG_TARGET_XML=/usr/share/xml/scap/ssg/content/ssg-rhel9-ds.xml
+                export SHIP_OVIRT_CONF=1
+                ./autogen.sh \
+                    --with-distro=alma9 \
+                    --with-bootisourl="https://repo.almalinux.org/almalinux/9/isos/x86_64/AlmaLinux-9.0-beta-1-x86_64-boot.iso"
+    elif [ "$(rpm --eval %{rocky})" == "9" ] ; then
+                prepare_osinfo_db
+                # Replace SSG TARGET with ssg-rhel9-ds.xml equivalent
+                export SSG_TARGET_XML=/usr/share/xml/scap/ssg/content/ssg-rhel9-ds.xml
+                export SHIP_OVIRT_CONF=1
+                ./autogen.sh \
+                    --with-distro=rocky9 \
+                    --with-bootisourl="http://dl.rockylinux.org/pub/rocky/9/isos/x86_64/Rocky-9-latest-x86_64-boot.iso"
+    else
+        case ${dist} in
+            el8)
+                prepare_osinfo_db
+                export SSG_TARGET_XML=/usr/share/xml/scap/ssg/content/ssg-rhel8-ds.xml
+                export SHIP_OVIRT_CONF=1
+                ./autogen.sh
+                ;;
+            el9)
+                prepare_osinfo_db
+                export SSG_TARGET_XML=/usr/share/xml/scap/ssg/content/ssg-rhel9-ds.xml
+                export SHIP_OVIRT_CONF=1
+                ./autogen.sh \
+                    --with-distro=c9s \
+                    --with-bootisourl=http://mirror.stream.centos.org/9-stream/BaseOS/x86_64/iso/CentOS-Stream-9-latest-x86_64-boot.iso
+                ;;
+        esac
+    fi
     make squashfs &
     tail -f virt-install.log --pid=$! --retry ||:
 
