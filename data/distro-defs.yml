@@ -53,8 +53,50 @@ c9s:
   needed_repos:
     - |
         dnf install -y crypto-policies-scripts crypto-policies
-        # until https://pagure.io/copr/copr/issue/2106 is fixed
-        update-crypto-policies --set LEGACY
+        rpm --import https://download.copr.fedorainfracloud.org/results/ovirt/ovirt-master-snapshot/pubkey.gpg
+        dnf --repofrompath=ovirt-master-snapshot,https://download.copr.fedorainfracloud.org/results/ovirt/ovirt-master-snapshot/centos-stream-9-x86_64/ install -y ovirt-release-master
+        dnf config-manager --set-enabled crb || true
+  packages-switch: --excludeWeakdeps
+  packages:
+    - dracut-live
+    - centos-stream-repos
+    - scap-security-guide  # needed for post action
+  post:
+    - |
+        ver=$(rpm -qf /etc/yum.repos.d/ovirt* | grep ^ovirt-release | sort -u | sed 's/ovirt-release//' | cut -b1)
+        [[ $ver = "-" ]] && ver="m"
+        ln -sf /usr/share/xml/scap/ssg/content/{ssg-rhel9,ssg-onn$ver}-ds.xml
+
+alma9:
+  url: --url=https://repo.almalinux.org/almalinux/9/BaseOS/$basearch/os/
+  repos:
+    appstream: --baseurl=https://repo.almalinux.org/almalinux/9/AppStream/$basearch/os/
+    crb: --baseurl=https://repo.almalinux.org/almalinux/9/CRB/$basearch/os/
+  needed_repos:
+    - |
+        dnf install -y crypto-policies-scripts crypto-policies
+        rpm --import https://download.copr.fedorainfracloud.org/results/ovirt/ovirt-master-snapshot/pubkey.gpg
+        dnf --repofrompath=ovirt-master-snapshot,https://download.copr.fedorainfracloud.org/results/ovirt/ovirt-master-snapshot/centos-stream-9-x86_64/ install -y ovirt-release-master
+        dnf config-manager --set-enabled crb || true
+  packages-switch: --excludeWeakdeps
+  packages:
+    - dracut-live
+    - centos-stream-repos
+    - scap-security-guide  # needed for post action
+  post:
+    - |
+        ver=$(rpm -qf /etc/yum.repos.d/ovirt* | grep ^ovirt-release | sort -u | sed 's/ovirt-release//' | cut -b1)
+        [[ $ver = "-" ]] && ver="m"
+        ln -sf /usr/share/xml/scap/ssg/content/{ssg-rhel9,ssg-onn$ver}-ds.xml
+
+rocky9:
+  url: --url=http://dl.rockylinux.org/pub/rocky/9/BaseOS/$basearch/os/
+  repos:
+     appstream: --baseurl=http://dl.rockylinux.org/pub/rocky/9/AppStream/$basearch/os/
+     crb: --baseurl=http://dl.rockylinux.org/pub/rocky/9/CRB/$basearch/os/
+  needed_repos:
+    - |
+        dnf install -y crypto-policies-scripts crypto-policies
         rpm --import https://download.copr.fedorainfracloud.org/results/ovirt/ovirt-master-snapshot/pubkey.gpg
         dnf --repofrompath=ovirt-master-snapshot,https://download.copr.fedorainfracloud.org/results/ovirt/ovirt-master-snapshot/centos-stream-9-x86_64/ install -y ovirt-release-master
         dnf config-manager --set-enabled crb || true
