@@ -33,7 +33,7 @@ cbs8s:
     - python36
     - centos-stream-repos
     - scap-security-guide  # needed for post action
-    - centos-release-ovirt45 # needed to get additional repos
+    - centos-release-ovirt45  # needed to get additional repos
     - cockpit
     - ovirt-release-host-node
     - ovirt-node-ng-image-update-placeholder
@@ -54,6 +54,72 @@ c9s:
         dnf config-manager --set-enabled centos-ovirt45-testing
         dnf config-manager --set-enabled ovirt-45-upstream-testing
 
+  packages-switch: --excludeWeakdeps
+  packages:
+    - dracut-live
+    - centos-stream-repos
+    - scap-security-guide  # needed for post action
+  post:
+    - |
+        ln -sf /usr/share/xml/scap/ssg/content/{ssg-rhel9,ssg-onn45}-ds.xml
+
+alma9:
+  url: --url=https://repo.almalinux.org/almalinux/9/BaseOS/$basearch/os/
+  repos:
+    appstream: --baseurl=https://repo.almalinux.org/almalinux/9/AppStream/$basearch/os/
+    crb: --baseurl=https://repo.almalinux.org/almalinux/9/CRB/$basearch/os/
+  needed_repos:
+    - |
+        dnf install -y crypto-policies-scripts crypto-policies
+        cat >/etc/yum.repos.d/CentOS-Stream-Extras-common.repo <<'EOF'
+        [c9s-extras-common]
+        name=CentOS Stream $releasever - Extras packages
+        metalink=https://mirrors.centos.org/metalink?repo=centos-extras-sig-extras-common-$stream&arch=$basearch&protocol=https,http
+        gpgkey=https://www.centos.org/keys/RPM-GPG-KEY-CentOS-SIG-Extras
+        gpgcheck=1
+        repo_gpgcheck=0
+        metadata_expire=6h
+        countme=1
+        enabled=1
+        EOF
+
+        echo "9-stream" > /etc/yum/vars/stream
+
+        dnf distro-sync --nobest
+        dnf install -y centos-release-ovirt45
+  packages-switch: --excludeWeakdeps
+  packages:
+    - dracut-live
+    - centos-stream-repos
+    - scap-security-guide  # needed for post action
+  post:
+    - |
+        ln -sf /usr/share/xml/scap/ssg/content/{ssg-rhel9,ssg-onn45}-ds.xml
+
+rocky9:
+  url: --url=http://dl.rockylinux.org/pub/rocky/9/BaseOS/$basearch/os/
+  repos:
+    appstream: --baseurl=http://dl.rockylinux.org/pub/rocky/9/AppStream/$basearch/os/
+    crb: --baseurl=http://dl.rockylinux.org/pub/rocky/9/CRB/$basearch/os/
+  needed_repos:
+    - |
+        dnf install -y crypto-policies-scripts crypto-policies
+        cat >/etc/yum.repos.d/CentOS-Stream-Extras-common.repo <<'EOF'
+        [c9s-extras-common]
+        name=CentOS Stream $releasever - Extras packages
+        metalink=https://mirrors.centos.org/metalink?repo=centos-extras-sig-extras-common-$stream&arch=$basearch&protocol=https,http
+        gpgkey=https://www.centos.org/keys/RPM-GPG-KEY-CentOS-SIG-Extras
+        gpgcheck=1
+        repo_gpgcheck=0
+        metadata_expire=6h
+        countme=1
+        enabled=1
+        EOF
+
+        echo "9-stream" > /etc/yum/vars/stream
+
+        dnf distro-sync --nobest
+        dnf install -y centos-release-ovirt45
   packages-switch: --excludeWeakdeps
   packages:
     - dracut-live
