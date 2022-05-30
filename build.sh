@@ -50,11 +50,11 @@ build() {
     if [ "$(rpm --eval %{almalinux})" == "9" ] ; then
                 prepare_osinfo_db
                 # Replace SSG TARGET with ssg-rhel9-ds.xml equivalent
-                export SSG_TARGET_XML=/usr/share/xml/scap/ssg/content/ssg-rhel9-ds.xml
+                export SSG_TARGET_XML=/usr/share/xml/scap/ssg/content/ssg-almalinux9-ds.xml
                 export SHIP_OVIRT_CONF=1
                 ./autogen.sh \
                     --with-distro=alma9 \
-                    --with-bootisourl="https://repo.almalinux.org/almalinux/9/isos/x86_64/AlmaLinux-9.0-beta-1-x86_64-boot.iso"
+                    --with-bootisourl="http://repo.almalinux.org/almalinux/9/isos/x86_64/AlmaLinux-9-latest-x86_64-boot.iso"
     elif [ "$(rpm --eval %{rocky})" == "9" ] ; then
                 prepare_osinfo_db
                 # Replace SSG TARGET with ssg-rhel9-ds.xml equivalent
