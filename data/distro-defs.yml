@@ -87,6 +87,8 @@ alma9:
 
         dnf distro-sync --nobest
         dnf install -y centos-release-ovirt45
+        dnf config-manager --set-enabled centos-ovirt45-testing
+        dnf config-manager --set-enabled ovirt-45-upstream-testing
   packages-switch: --excludeWeakdeps
   packages:
     - dracut-live
@@ -120,6 +122,8 @@ rocky9:
 
         dnf distro-sync --nobest
         dnf install -y centos-release-ovirt45
+        dnf config-manager --set-enabled centos-ovirt45-testing
+        dnf config-manager --set-enabled ovirt-45-upstream-testing
   packages-switch: --excludeWeakdeps
   packages:
     - dracut-live
