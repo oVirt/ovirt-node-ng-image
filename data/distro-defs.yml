@@ -89,6 +89,8 @@ alma9:
         dnf install -y centos-release-ovirt45
         dnf config-manager --set-enabled centos-ovirt45-testing
         dnf config-manager --set-enabled ovirt-45-upstream-testing
+        # workaround for Bug https://bugzilla.redhat.com/show_bug.cgi?id=2091581
+        dnf install -y https://kojihub.stream.centos.org/kojifiles/packages/nmstate/2.0.0/2.el9/noarch/nmstate-plugin-ovsdb-2.0.0-2.el9.noarch.rpm https://kojihub.stream.centos.org/kojifiles/packages/nmstate/2.0.0/2.el9/noarch/python3-libnmstate-2.0.0-2.el9.noarch.rpm
   packages-switch: --excludeWeakdeps
   packages:
     - dracut-live
@@ -124,6 +126,8 @@ rocky9:
         dnf install -y centos-release-ovirt45
         dnf config-manager --set-enabled centos-ovirt45-testing
         dnf config-manager --set-enabled ovirt-45-upstream-testing
+        # workaround for Bug https://bugzilla.redhat.com/show_bug.cgi?id=2091581
+        dnf install -y https://kojihub.stream.centos.org/kojifiles/packages/nmstate/2.0.0/2.el9/noarch/nmstate-plugin-ovsdb-2.0.0-2.el9.noarch.rpm https://kojihub.stream.centos.org/kojifiles/packages/nmstate/2.0.0/2.el9/noarch/python3-libnmstate-2.0.0-2.el9.noarch.rpm
   packages-switch: --excludeWeakdeps
   packages:
     - dracut-live
