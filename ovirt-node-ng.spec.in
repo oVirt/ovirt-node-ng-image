@@ -80,6 +80,9 @@ umount "$MNTDIR"
 %{_node_image_dir}/product.img
 
 %changelog
+* Wed Aug 10 2022 Lev Veyde <lveyde@redhat.com> - 4.5.2
+- oVirt Node 4.5.2
+
 * Wed Jun 22 2022 Lev Veyde <lveyde@redhat.com> - 4.5.1
 - oVirt Node 4.5.1
 
