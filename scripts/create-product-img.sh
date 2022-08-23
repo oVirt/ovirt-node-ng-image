@@ -20,6 +20,8 @@ PIXMAPDIR=$PRDDIR/usr/share/anaconda/pixmaps/
 KSDIR=$PRDDIR/usr/share/anaconda/
 SSGDIR=$PRDDIR/usr/share/xml/scap/ssg/content
 
+echo "Building version ${VERSION} from branch ${BRANCH}"
+
 mkdir -p "$PRDDIR" "$PIXMAPDIR" "$KSDIR"
 cp "$SRCDIR"/sidebar-logo.png "$PIXMAPDIR/"
 
