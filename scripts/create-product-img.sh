@@ -6,7 +6,7 @@ set -e
 
 isfinal() { [[ ! "$1" =~ (-pre|-snapshot|master) ]] ; }
 
-BRANCH=${BRANCH:-master}
+BRANCH=${GITHUB_REF_NAME:-master}
 GUESSED_ISFINAL=$(isfinal ${BRANCH} && echo True || echo False )
 
 ISFINAL=${ISFINAL:-${GUESSED_ISFINAL}}
@@ -20,7 +20,7 @@ PIXMAPDIR=$PRDDIR/usr/share/anaconda/pixmaps/
 KSDIR=$PRDDIR/usr/share/anaconda/
 SSGDIR=$PRDDIR/usr/share/xml/scap/ssg/content
 
-echo "GitHub base branch: ${GITHUB_BASE_REF}, generated version: ${GITHUB_BASE_REF#ovirt-}"
+echo "GitHub base branch: ${GITHUB_REF_NAME}, generated version: ${GITHUB_REF_NAME#ovirt-}"
 echo "Building version ${VERSION} from branch ${BRANCH}"
 
 mkdir -p "$PRDDIR" "$PIXMAPDIR" "$KSDIR"
