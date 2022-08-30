@@ -189,6 +189,9 @@ check_iso() {
     }
 }
 
+echo "GitHub variables:"
+export -p | grep GITHUB_
+
 prepare
 build
 [[ -n "$CHECK_ISO" ]] && check_iso
