@@ -15,8 +15,8 @@ dnl Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
 dnl MA  02110-1301, USA.  A copy of the GNU General Public License is
 dnl also available at http://www.gnu.org/copyleft/gpl.html.
 
-define([VERSION_NUMBER], [4.5.2])
-define([RELEASEVER], [1])
+define([VERSION_NUMBER], [4.5.3])
+define([RELEASEVER], [0.1])
 
 AC_INIT([ovirt-node-ng-image-update], VERSION_NUMBER, [devel@ovirt.org])
 AM_INIT_AUTOMAKE([-Wall -Werror foreign -Wno-portability tar-pax no-dependencies])
@@ -27,7 +27,7 @@ AC_SUBST([PACKAGE_RPM_VERSION])
 PACKAGE_RPM_RELEASE="1.$(date +%Y%m%d).0"
 AC_SUBST([PACKAGE_RPM_RELEASE])
 
-FINALBUILD=True
+FINALBUILD=False
 AC_SUBST([FINALBUILD])
 
 IMAGENAME="ovirt-node-ng-image"
