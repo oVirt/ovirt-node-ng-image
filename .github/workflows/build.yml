@@ -61,7 +61,7 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
       - name: Build
         env:
@@ -101,7 +101,7 @@ jobs:
           keep_files_count: 20
 
       - name: Upload logs and manifests to github
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         with:
           name: "logs-and-manifests${{ matrix.name }}"
           path: |
@@ -120,7 +120,7 @@ jobs:
       - build-matrix
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
       - name: Add a comment about successful job and close issue
         run: |
           set -e
@@ -143,7 +143,7 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
       - name: Add a comment about failed job
         run: |
           set -e
