@@ -17,7 +17,7 @@ centos8stream:
     - scap-security-guide  # needed for post action
   post:
     - |
-        ln -sf /usr/share/xml/scap/ssg/content/{ssg-rhel8,ssg-onn45}-ds.xml
+        ln -sf /usr/share/xml/scap/ssg/content/{ssg-rhel8,ssg-onn4}-ds.xml
 
 cbs8s:
   url: --url=http://mirror.centos.org/centos/8-stream/BaseOS/x86_64/os/
@@ -38,7 +38,7 @@ cbs8s:
     - -ovirt-node-ng-image-update
   post:
     - |
-        ln -sf /usr/share/xml/scap/ssg/content/{ssg-rhel8,ssg-onn45}-ds.xml
+        ln -sf /usr/share/xml/scap/ssg/content/{ssg-rhel8,ssg-onn4}-ds.xml
 
 c9s:
   url: --metalink=https://mirrors.centos.org/metalink?repo=centos-baseos-$stream&arch=$basearch
@@ -57,7 +57,7 @@ c9s:
     - scap-security-guide  # needed for post action
   post:
     - |
-        ln -sf /usr/share/xml/scap/ssg/content/{ssg-rhel9,ssg-onn45}-ds.xml
+        ln -sf /usr/share/xml/scap/ssg/content/{ssg-rhel9,ssg-onn4}-ds.xml
 
 alma9:
   url: --url=https://repo.almalinux.org/almalinux/9/BaseOS/$basearch/os/
@@ -93,7 +93,7 @@ alma9:
     - scap-security-guide  # needed for post action
   post:
     - |
-        ln -sf /usr/share/xml/scap/ssg/content/{ssg-almalinux9,ssg-onn45}-ds.xml
+        ln -sf /usr/share/xml/scap/ssg/content/{ssg-almalinux9,ssg-onn4}-ds.xml
 
 rocky9:
   url: --url=http://dl.rockylinux.org/pub/rocky/9/BaseOS/$basearch/os/
@@ -129,4 +129,4 @@ rocky9:
     - scap-security-guide  # needed for post action
   post:
     - |
-        ln -sf /usr/share/xml/scap/ssg/content/{ssg-rhel9,ssg-onn45}-ds.xml
+        ln -sf /usr/share/xml/scap/ssg/content/{ssg-rhel9,ssg-onn4}-ds.xml
