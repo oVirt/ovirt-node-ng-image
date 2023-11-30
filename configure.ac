@@ -15,7 +15,7 @@ dnl Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
 dnl MA  02110-1301, USA.  A copy of the GNU General Public License is
 dnl also available at http://www.gnu.org/copyleft/gpl.html.
 
-define([VERSION_NUMBER], [4.5.5])
+define([VERSION_NUMBER], [4.5.6])
 define([RELEASEVER], [0.0])
 
 AC_INIT([ovirt-node-ng-image-update], VERSION_NUMBER, [devel@ovirt.org])
