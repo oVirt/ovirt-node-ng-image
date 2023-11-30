@@ -8,9 +8,9 @@
 Name:       @PACKAGE_NAME@
 Version:    @PLACEHOLDER_RPM_VERSION@
 Release:    @PLACEHOLDER_RPM_RELEASE@
-License:    GPLv2
+License:    GPL-2.0-only
 Summary:    oVirt Node Next Image Update
-URL:        http://www.ovirt.org/node/
+URL:        https://www.ovirt.org/download/node.html
 Source0:    %{name}-@PACKAGE_VERSION@.tar.gz
 Source1:    @IMAGENAME@.squashfs.img
 Source2:    product.img
@@ -80,6 +80,10 @@ umount "$MNTDIR"
 %{_node_image_dir}/product.img
 
 %changelog
+* Thu Nov 30 2023 Sandro Bonazzola <sandro.bonazzola@gmail.com> - 4.5.5
+- oVirt Node 4.5.5
+- Migrated license tag to SPDX format
+
 * Thu Dec 01 2022 Lev Veyde <lveyde@redhat.com> - 4.5.4
 - oVirt Node 4.5.4
 
