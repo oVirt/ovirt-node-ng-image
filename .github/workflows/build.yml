@@ -31,7 +31,7 @@ jobs:
   set-kernel:
     strategy:
       matrix:
-        name: [el8, el9]
+        name: [el9]
     runs-on: [image-builders, "${{ matrix.name }}"]
     steps:
       - name: mount /host/modules
@@ -47,8 +47,6 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - name: el8
-            container-name: el8stream
           - name: el9
             container-name: el9stream
     runs-on: [image-builders, "${{ matrix.name }}"]
