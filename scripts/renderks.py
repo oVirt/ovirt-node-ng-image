@@ -14,7 +14,7 @@ def main():
     args = parser.parse_args()
 
     with open(os.path.join(args.data_dir, "distro-defs.yml")) as f:
-        data = yaml.load(f)[args.DISTRO]
+        data = yaml.load(f,yaml.SafeLoader)[args.DISTRO]
 
     env = Environment(loader=FileSystemLoader(searchpath=args.data_dir))
     template = env.get_template("ovirt-node-ng-image.j2")
