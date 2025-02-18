@@ -18,7 +18,7 @@
 	},
 	"mounts": [
 		"type=bind,source=/home/${localEnv:USER}/.ssh,target=/root/.ssh,readonly",
-        "type=bind,source=/lib/modules,target=/lib/modules,readonly"
+		"type=bind,source=/lib/modules,target=/lib/modules,readonly"
 	],
 	"postCreateCommand": "ln -s /lib/modules/$(uname -r)/kernel /kernel"
 }
