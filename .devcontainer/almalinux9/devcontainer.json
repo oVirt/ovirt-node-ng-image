@@ -4,9 +4,7 @@
 	},
 	"runArgs": [
 		"--ulimit=nofile=262144:262144",
-		"--privileged",
-		"--device=/dev/kvm"
-		
+		"--privileged"	
 	],
 	"customizations": {
 		"vscode": {
