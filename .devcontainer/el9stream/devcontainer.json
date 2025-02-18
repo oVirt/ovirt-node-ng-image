@@ -17,7 +17,6 @@
 		"memory": "4gb"
 	},
 	"mounts": [
-		"type=bind,source=${localWorkspaceFolder},target=/work",
 		"type=bind,source=/home/${localEnv:USER}/.ssh,target=/root/.ssh,readonly",
         "type=bind,source=/lib/modules,target=/lib/modules,readonly"
 	],
