@@ -1,0 +1,24 @@
+{
+	"build": {
+		"dockerfile": "Dockerfile"
+	},
+	"runArgs": [
+		"--ulimit=nofile=262144:262144",
+		"--privileged"	
+	],
+	"customizations": {
+		"vscode": {
+			"extensions": [
+				"ms-azuretools.vscode-docker"
+			]
+		}
+	},
+	"hostRequirements": {
+		"memory": "4gb"
+	},
+	"mounts": [
+		"type=bind,source=/home/${localEnv:USER}/.ssh,target=/root/.ssh,readonly",
+		"type=bind,source=/lib/modules,target=/lib/modules,readonly"
+	],
+	"postCreateCommand": "ln -s /lib/modules/$(uname -r)/kernel /kernel"
+}
