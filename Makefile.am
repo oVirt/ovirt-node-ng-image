@@ -69,7 +69,7 @@ data/%.ks: data/%.j2
 
 LMC ?= livemedia-creator
 %.squashfs.img: data/%.ks @BOOTISO@
-	$(LMC) $(LMCOPTS) --vcpus=$(LMC_CPUS) --ram=$(LMC_MEM) --kernel-args="ipv6.disable=1" --make-pxe-live --nomacboot --iso @BOOTISO@ --ks $< --resultdir build --tmp @TMPDIR@
+	$(LMC) $(LMCOPTS) --live-rootfs-size=5 --vcpus=$(LMC_CPUS) --ram=$(LMC_MEM) --kernel-args="ipv6.disable=1" --make-pxe-live --nomacboot --iso @BOOTISO@ --ks $< --resultdir build --tmp @TMPDIR@
 	mv -v build/*squash* "$@"
 	ls -l *squash*
 	file *squash*
