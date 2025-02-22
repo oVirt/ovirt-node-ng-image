@@ -32,7 +32,8 @@ jobs:
     strategy:
       matrix:
         name: [el9]
-    runs-on: [image-builders, "${{ matrix.name }}"]
+    # runs-on: [image-builders, "${{ matrix.name }}"]
+    runs-on: [self-hosted]
     steps:
       - name: mount /host/modules
         run: |
@@ -47,9 +48,12 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - name: el9
+          - name: c9s
             container-name: el9stream
-    runs-on: [image-builders, "${{ matrix.name }}"]
+          - name: alma9
+            container-name: almalinux9
+    # runs-on: [image-builders, "${{ matrix.name }}"]
+    runs-on: [self-hosted]
     needs: set-kernel
     container:
       image: quay.io/ovirt/buildcontainer:${{ matrix.container-name }}
