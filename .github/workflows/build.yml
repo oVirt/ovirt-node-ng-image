@@ -57,7 +57,7 @@ jobs:
       image: quay.io/ovirt/buildcontainer:${{ matrix.container-name }}
       volumes:
         - /host/modules:/host/modules
-      options: --privileged
+      options: --privileged --ulimit=nofile=262144:262144 # reduce nofiles to avoid Data queue size too large in unsquashfs
 
     steps:
       - name: Checkout
