@@ -59,7 +59,7 @@ jobs:
       image: quay.io/ovirt/buildcontainer:${{ matrix.container-name }}
       volumes:
         - /host/modules:/host/modules
-      options: --privileged
+      options: --privileged --ulimit=nofile=262144:262144
 
     steps:
       - name: Checkout
