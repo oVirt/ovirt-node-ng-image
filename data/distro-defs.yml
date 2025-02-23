@@ -78,7 +78,7 @@ alma9:
         rpm --import https://download.copr.fedorainfracloud.org/results/ovirt/ovirt-master-snapshot/pubkey.gpg
         dnf --repofrompath=ovirt-master-snapshot,https://download.copr.fedorainfracloud.org/results/ovirt/ovirt-master-snapshot/centos-stream-9-x86_64/ install -y ovirt-release-master
         dnf config-manager --set-enabled crb || true
-  packages-switch: --excludeWeakdeps
+  packages-switch: --exclude-weakdeps
   packages:
     - dracut-live
     - centos-stream-repos
