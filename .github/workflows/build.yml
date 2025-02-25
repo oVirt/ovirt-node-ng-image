@@ -32,7 +32,6 @@ jobs:
     strategy:
       matrix:
         name: [el9]
-    # runs-on: [image-builders, "${{ matrix.name }}"]
     runs-on: [self-hosted]
     steps:
       - name: mount /host/modules
@@ -52,7 +51,6 @@ jobs:
             container-name: el9stream
           - name: alma9
             container-name: almalinux9
-    # runs-on: [image-builders, "${{ matrix.name }}"]
     runs-on: [self-hosted]
     needs: set-kernel
     container:
