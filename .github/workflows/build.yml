@@ -28,18 +28,6 @@ on:
   #   - cron: '0 6 * * *'
 
 jobs:
-  set-kernel:
-    strategy:
-      matrix:
-        name: [el9]
-    runs-on: [self-hosted]
-    steps:
-      - name: mount /host/modules
-        run: |
-          echo "Kernel version $(uname -r)"
-          mkdir -p /host/modules
-          umount -f /host/modules 2>/dev/null || true
-          mount --bind /lib/modules/$(uname -r) /host/modules
 
   build-matrix:
     timeout-minutes: 60
@@ -52,14 +40,20 @@ jobs:
           - name: alma9
             container-name: almalinux9
     runs-on: [self-hosted]
-    needs: set-kernel
     container:
       image: quay.io/ovirt/buildcontainer:${{ matrix.container-name }}
       volumes:
-        - /host/modules:/host/modules
+        - /lib/modules:/lib/modules:ro
       options: --privileged --ulimit=nofile=262144:262144 # reduce nofiles to avoid Data queue size too large in unsquashfs
 
     steps:
+      - name: mount /host/modules
+        run: |
+          echo "Kernel version $(uname -r)"
+          mkdir -p /host/modules
+          umount -f /host/modules 2>/dev/null || true
+          mount --bind /lib/modules/$(uname -r) /host/modules
+
       - name: Checkout
         uses: ovirt/checkout-action@main
 
