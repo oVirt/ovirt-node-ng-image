@@ -28,8 +28,6 @@ if [[ -n $SHIP_OVIRT_CONF ]]; then
     mkdir -p $product_conf_dir
     if [ "$(rpm --eval %{almalinux})" == "9" ] ; then
       cp $DATADIR/ovirt.alma.el9.conf $product_conf_dir/ovirt.conf
-    elif [ "$(rpm --eval %{rocky})" == "9" ] ; then
-      cp $DATADIR/ovirt.rocky.el9.conf $product_conf_dir/ovirt.conf
     else
       cp $DATADIR/ovirt$(rpm --eval "%dist").conf $product_conf_dir/ovirt.conf
     fi
@@ -50,7 +48,7 @@ cat > "$PRDDIR/.buildstamp" <<EOF
 [Main]
 Product=oVirt Node Next
 Version=${VERSION}
-BugURL=https://bugzilla.redhat.com
+BugURL=https://github.com/oVirt/ovirt-node-ng-image
 IsFinal=${ISFINAL}
 UUID=$(date +%Y%m%d).x86_64
 [Compose]
