@@ -37,8 +37,12 @@ jobs:
         include:
           - name: c9s
             container-name: el9stream
+          - name: c10s
+            container-name: el10stream
           - name: alma9
             container-name: almalinux9
+          - name: alma10
+            container-name: almalinux10
     runs-on: [self-hosted]
     container:
       image: quay.io/ovirt/buildcontainer:${{ matrix.container-name }}

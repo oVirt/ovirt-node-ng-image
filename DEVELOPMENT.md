@@ -7,7 +7,7 @@ which can be destroyed after the build.
 It is not recommended to try to build on a system which contains valuable data since the system
 can be corrupted by the build process.
 
-It's higly recommended to run the build in an CentOS Stream 8 virtual machine with nested virtualization enabled.
+It's higly recommended to run the build in an CentOS Stream 9 virtual machine with nested virtualization enabled.
 
 as `root` user:
 

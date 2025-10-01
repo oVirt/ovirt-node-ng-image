@@ -1,50 +1,4 @@
 ---
-centos8stream:
-  url: --mirrorlist=http://mirrorlist.centos.org/?repo=BaseOS&release=8-stream&arch=$basearch
-  repos:
-    appstream: --mirrorlist=http://mirrorlist.centos.org/?repo=AppStream&release=8-stream&arch=$basearch
-    powertools: --mirrorlist=http://mirrorlist.centos.org/?repo=PowerTools&release=8-stream&arch=$basearch
-    extras: --mirrorlist=http://mirrorlist.centos.org/?repo=Extras&release=8-stream&arch=$basearch
-  needed_repos:
-    - |
-        rpm --import https://download.copr.fedorainfracloud.org/results/ovirt/ovirt-master-snapshot/pubkey.gpg
-        dnf --repofrompath=ovirt-master-snapshot,https://download.copr.fedorainfracloud.org/results/ovirt/ovirt-master-snapshot/centos-stream-8-x86_64/ install -y ovirt-release-master
-        dnf config-manager --set-enabled powertools || true
-  packages-switch: --excludeWeakdeps
-  packages:
-    - dracut-live
-    - python36
-    - centos-stream-repos
-    - scap-security-guide  # needed for post action
-  post:
-    - |
-        ver=$(rpm -qf /etc/yum.repos.d/ovirt* | grep ^ovirt-release | sort -u | sed 's/ovirt-release//' | cut -b1)
-        [[ $ver = "-" ]] && ver="m"
-        ln -sf /usr/share/xml/scap/ssg/content/{ssg-rhel8,ssg-onn$ver}-ds.xml
-
-cbs8s:
-  url: --url=http://mirror.centos.org/centos/8-stream/BaseOS/x86_64/os/
-  repos: {}
-  needed_repos:
-    - |
-        dnf config-manager --set-enabled powertools || true
-  packages-switch: --excludeWeakdeps
-  packages:
-    - dracut-live
-    - python36
-    - centos-stream-repos
-    - scap-security-guide  # needed for post action
-    - centos-release-ovirt45 # needed to get additional repos
-    - cockpit
-    - ovirt-release-host-node
-    - ovirt-node-ng-image-update-placeholder
-    - -ovirt-node-ng-image-update
-  post:
-    - |
-        ver=$(rpm -qf /etc/yum.repos.d/ovirt* | grep ^ovirt-release | sort -u | sed 's/ovirt-release//' | cut -b1)
-        [[ $ver = "-" ]] && ver="m"
-        ln -sf /usr/share/xml/scap/ssg/content/{ssg-rhel8,ssg-onn$ver}-ds.xml
-
 c9s:
   url: --metalink=https://mirrors.centos.org/metalink?repo=centos-baseos-$stream&arch=$basearch
   repos:
@@ -67,6 +21,28 @@ c9s:
         [[ $ver = "-" ]] && ver="m"
         ln -sf /usr/share/xml/scap/ssg/content/{ssg-rhel9,ssg-onn$ver}-ds.xml
 
+c10s:
+  url: --metalink=https://mirrors.centos.org/metalink?repo=centos-baseos-$stream&arch=$basearch
+  repos:
+    appstream: --metalink=https://mirrors.centos.org/metalink?repo=centos-appstream-$stream&arch=$basearch
+    crb: --metalink=https://mirrors.centos.org/metalink?repo=centos-crb-$stream&arch=$basearch
+  needed_repos:
+    - |
+        dnf install -y crypto-policies-scripts crypto-policies
+        rpm --import https://download.copr.fedorainfracloud.org/results/ovirt/ovirt-master-snapshot/pubkey.gpg
+        dnf --repofrompath=ovirt-master-snapshot,https://download.copr.fedorainfracloud.org/results/ovirt/ovirt-master-snapshot/centos-stream-10-x86_64/ install -y ovirt-release-master
+        dnf config-manager --set-enabled crb || true
+  packages-switch: --exclude-weakdeps
+  packages:
+    - dracut-live
+    - centos-stream-repos
+    - scap-security-guide  # needed for post action
+  post:
+    - |
+        ver=$(rpm -qf /etc/yum.repos.d/ovirt* | grep ^ovirt-release | sort -u | sed 's/ovirt-release//' | cut -b1)
+        [[ $ver = "-" ]] && ver="m"
+        ln -sf /usr/share/xml/scap/ssg/content/{ssg-rhel9,ssg-onn$ver}-ds.xml
+
 alma9:
   url: --url=https://repo.almalinux.org/almalinux/9/BaseOS/$basearch/os/
   repos:
@@ -76,7 +52,7 @@ alma9:
     - |
         dnf install -y crypto-policies-scripts crypto-policies
         rpm --import https://download.copr.fedorainfracloud.org/results/ovirt/ovirt-master-snapshot/pubkey.gpg
-        dnf --repofrompath=ovirt-master-snapshot,https://download.copr.fedorainfracloud.org/results/ovirt/ovirt-master-snapshot/centos-stream-9-x86_64/ install -y ovirt-release-master
+        dnf --repofrompath=ovirt-master-snapshot,https://download.copr.fedorainfracloud.org/results/ovirt/ovirt-master-snapshot/rhel-9-x86_64/ install -y ovirt-release-master
         dnf config-manager --set-enabled crb || true
   packages-switch: --exclude-weakdeps
   packages:
@@ -87,24 +63,22 @@ alma9:
     - |
         ln -sf /usr/share/xml/scap/ssg/content/{ssg-almalinux9,ssg-onn45}-ds.xml
 
-rocky9:
-  url: --url=http://dl.rockylinux.org/pub/rocky/9/BaseOS/$basearch/os/
+alma10:
+  url: --url=https://repo.almalinux.org/almalinux/10/BaseOS/$basearch/os/
   repos:
-     appstream: --baseurl=http://dl.rockylinux.org/pub/rocky/9/AppStream/$basearch/os/
-     crb: --baseurl=http://dl.rockylinux.org/pub/rocky/9/CRB/$basearch/os/
+    appstream: --baseurl=https://repo.almalinux.org/almalinux/10/AppStream/$basearch/os/
+    crb: --baseurl=https://repo.almalinux.org/almalinux/10/CRB/$basearch/os/
   needed_repos:
     - |
         dnf install -y crypto-policies-scripts crypto-policies
         rpm --import https://download.copr.fedorainfracloud.org/results/ovirt/ovirt-master-snapshot/pubkey.gpg
-        dnf --repofrompath=ovirt-master-snapshot,https://download.copr.fedorainfracloud.org/results/ovirt/ovirt-master-snapshot/centos-stream-9-x86_64/ install -y ovirt-release-master
+        dnf --repofrompath=ovirt-master-snapshot,https://download.copr.fedorainfracloud.org/results/ovirt/ovirt-master-snapshot/rhel-10-x86_64/ install -y ovirt-release-master
         dnf config-manager --set-enabled crb || true
-  packages-switch: --excludeWeakdeps
+  packages-switch: --exclude-weakdeps
   packages:
     - dracut-live
     - centos-stream-repos
     - scap-security-guide  # needed for post action
   post:
     - |
-        ver=$(rpm -qf /etc/yum.repos.d/ovirt* | grep ^ovirt-release | sort -u | sed 's/ovirt-release//' | cut -b1)
-        [[ $ver = "-" ]] && ver="m"
-        ln -sf /usr/share/xml/scap/ssg/content/{ssg-rhel9,ssg-onn$ver}-ds.xml
+        ln -sf /usr/share/xml/scap/ssg/content/{ssg-almalinux10,ssg-onn45}-ds.xml

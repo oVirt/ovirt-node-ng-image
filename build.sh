@@ -55,22 +55,16 @@ build() {
                 ./autogen.sh \
                     --with-distro=alma9 \
                     --with-bootisourl="http://repo.almalinux.org/almalinux/9/isos/x86_64/AlmaLinux-9-latest-x86_64-boot.iso"
-    elif [ "$(rpm --eval %{rocky})" == "9" ] ; then
+    elif [ "$(rpm --eval %{almalinux})" == "10" ] ; then
                 prepare_osinfo_db
-                # Replace SSG TARGET with ssg-rhel9-ds.xml equivalent
-                export SSG_TARGET_XML=/usr/share/xml/scap/ssg/content/ssg-rhel9-ds.xml
+                # Replace SSG TARGET with ssg-almalinux10-ds.xml equivalent
+                export SSG_TARGET_XML=/usr/share/xml/scap/ssg/content/ssg-almalinux10-ds.xml
                 export SHIP_OVIRT_CONF=1
                 ./autogen.sh \
-                    --with-distro=rocky9 \
-                    --with-bootisourl="http://dl.rockylinux.org/pub/rocky/9/isos/x86_64/Rocky-9-latest-x86_64-boot.iso"
+                    --with-distro=alma10 \
+                    --with-bootisourl="http://repo.almalinux.org/almalinux/10/isos/x86_64/AlmaLinux-10-latest-x86_64-boot.iso"
     else
         case ${dist} in
-            el8)
-                prepare_osinfo_db
-                export SSG_TARGET_XML=/usr/share/xml/scap/ssg/content/ssg-rhel8-ds.xml
-                export SHIP_OVIRT_CONF=1
-                ./autogen.sh
-                ;;
             el9)
                 prepare_osinfo_db
                 export SSG_TARGET_XML=/usr/share/xml/scap/ssg/content/ssg-rhel9-ds.xml
@@ -78,6 +72,14 @@ build() {
                 ./autogen.sh \
                     --with-distro=c9s \
                     --with-bootisourl=http://mirror.stream.centos.org/9-stream/BaseOS/x86_64/iso/CentOS-Stream-9-latest-x86_64-boot.iso
+                ;;
+            el10)
+                prepare_osinfo_db
+                export SSG_TARGET_XML=/usr/share/xml/scap/ssg/content/ssg-rhel10-ds.xml
+                export SHIP_OVIRT_CONF=1
+                ./autogen.sh \
+                    --with-distro=c9s \
+                    --with-bootisourl=http://mirror.stream.centos.org/10-stream/BaseOS/x86_64/iso/CentOS-Stream-10-latest-x86_64-boot.iso
                 ;;
         esac
     fi
