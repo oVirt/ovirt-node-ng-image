@@ -41,9 +41,9 @@ AC_SUBST([DISTRO])
 
 AC_ARG_WITH([bootisourl],
     [AS_HELP_STRING([--with-bootisourl=URL],
-        [boot ISO url (default: http://mirror.centos.org/centos/8-stream/BaseOS/x86_64/os/images/boot.iso)])],
+        [boot ISO url (default: http://mirror.centos.org/centos/9-stream/BaseOS/x86_64/os/images/boot.iso)])],
     [BOOTISOURL="$withval"],
-    [BOOTISOURL="http://mirror.centos.org/centos/8-stream/BaseOS/x86_64/os/images/boot.iso"])
+    [BOOTISOURL="http://mirror.centos.org/centos/9-stream/BaseOS/x86_64/os/images/boot.iso"])
 AC_SUBST([BOOTISOURL])
 
 AC_ARG_WITH([bootiso],
