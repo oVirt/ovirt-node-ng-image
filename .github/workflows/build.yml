@@ -21,11 +21,11 @@ on:
       checkiso:
         description: set to anything to verify the ISO
         required: false
-  # push:
-  #   branches: [master]
-  # schedule:
-  #   # Running every morning in EMEA timezone
-  #   - cron: '0 6 * * *'
+  push:
+     branches: [master]
+  schedule:
+     # Running every morning in EMEA timezone
+     - cron: '0 6 * * 0'
 
 jobs:
 
@@ -39,7 +39,7 @@ jobs:
             container-name: el9stream
           - name: alma9
             container-name: almalinux9
-    runs-on: [self-hosted]
+    runs-on: [self-hosted, image-builders]
     container:
       image: quay.io/ovirt/buildcontainer:${{ matrix.container-name }}
       volumes:
